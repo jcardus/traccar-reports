@@ -1,29 +1,34 @@
 <script>
-    import {Button, Toolbar, Spinner, Datepicker} from "flowbite-svelte";
-    import SelectDevices from "$lib/components/SelectDevices.svelte";
+    import {Button, Toolbar, Spinner, Datepicker, MultiSelect} from "flowbite-svelte";
     import {setAlert} from "$lib/store.js";
     import {t} from "$lib/i18n.js"
-    let loadingReport = false
-    let start, end, selected, datePicker
-    export let data
-    let reportLoaded = false
+    let loadingReport = $state(false)
+    let start = $state(undefined), end=$state(undefined), selected=$state([])
+    const {data} = $props()
+    let reportLoaded = $state(false)
+
 </script>
 <div class="flex flex-col h-full">
-<Toolbar class="w-full py-4 text-gray-500 dark:text-gray-400" embedded>
-    <div class="flex p-4">
-        <SelectDevices devices={data.devices} bind:selected="{selected}"/>
+<Toolbar>
+    <div class="p-4 w-full" >
+        <MultiSelect
+                placeholder="{t('Select devices')}..."
+                items={data.devices.sort((a, b) => a.name.localeCompare(b.name)).map(d => ({value: d.id, name: d.name}))}
+                bind:value={selected}
+                size="lg"
+        />
     </div>
-    <div class="w-96 p-4">
-        <Datepicker locale="{navigator.language}" range bind:rangeFrom={start} bind:rangeTo={end} bind:datePicker="{datePicker}"></Datepicker>
+    <div class="w-72 p-4">
+        <Datepicker locale={navigator.language} range bind:rangeFrom={start} bind:rangeTo={end}></Datepicker>
     </div>
     <div class="p-4">
-        <Button class="whitespace-nowrap" on:click={async () => {
+        <Button onclick={() => {
             loadingReport = false
             reportLoaded = false
             if (selected && selected.length && start && end) {
                 setTimeout(() => loadingReport = true, 100)
             } else {
-                setAlert('Please select devices and dates')
+                setAlert('Please select devices and dates' + selected.length + start)
             }
         }}>
             {#if loadingReport}
@@ -35,7 +40,7 @@
 </Toolbar>
 
 {#if loadingReport || reportLoaded}
-    <iframe on:load={() => {
+    <iframe onload={() => {
         reportLoaded=true
         loadingReport=false
     }} title="report" class="flex-grow" src="{
