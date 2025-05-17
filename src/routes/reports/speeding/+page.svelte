@@ -1,6 +1,6 @@
 <script>
     import {
-        Button, Heading,
+        Heading,
         Table,
         TableBody,
         TableBodyCell,
@@ -9,22 +9,19 @@
         TableHeadCell, Toolbar
     } from "flowbite-svelte";
     import { t } from "$lib/i18n";
-    import {ExpandOutline, FileChartBarSolid, FilePdfSolid, MinimizeOutline} from "flowbite-svelte-icons";
-    import { utils, writeFileXLSX } from 'xlsx';
     import SpeedLimitSign from "$lib/components/SpeedLimitSign.svelte";
     import {VisXYContainer, VisAxis, VisArea, VisTooltip, VisCrosshair, VisLine} from '@unovis/svelte'
     export let data;
     export let devices;
-    let showExport = true
-    let tbl
-    let maximized = false
+    import {showExport} from '$lib/store.js'
 
     import {formatDuration, intervalToDuration} from "date-fns";
     import distance from "@turf/distance";
     import {point} from "@turf/helpers";
     import { es, pt } from 'date-fns/locale';
+    import ExportReport from "$lib/components/ExportReport.svelte";
     const locales = { es, pt };
-
+    let tbl
     function buildGoogleStaticMapURL(coordinates, points) {
         const baseUrl = "https://maps.googleapis.com/maps/api/staticmap?";
         const size = "size=300x200";
@@ -37,44 +34,14 @@
 
 </script>
 
-<svelte:window on:afterprint={() => showExport=true} />
+<svelte:window on:afterprint={() => showExport.set(true)} />
 <div style="padding: 10px">
-{#if showExport }
-<Toolbar embedded class="w-full">
-    <div slot="end" class="flex items-center space-x-2">
-        <Button size="sm" color="alternative" class="gap-2 px-3" on:click={() => {
-            if (maximized) {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen()
-                    maximized = false
-                }
-            }
-            else {
-                document.documentElement.requestFullscreen()
-                maximized = true
-            }
-        }}>
-            {#if maximized}
-                <MinimizeOutline></MinimizeOutline>
-            {:else}
-                <ExpandOutline></ExpandOutline>
-            {/if}
-        </Button>
-        <Button size="sm" color="alternative" class="gap-2 px-3" on:click={() => {
-            showExport = false
-            setTimeout(() => window.print(), 100)
-        }}>
-            <FilePdfSolid size="md" class="-ml-1"  />PDF
-        </Button>
-        <Button size="sm" color="alternative" class="gap-2 px-3" on:click={() => {
-            const elt = tbl.getElementsByTagName("TABLE")[0];
-            const wb = utils.table_to_book(elt);
-            writeFileXLSX(wb, "speeding.xlsx");
-        }}>
-            <FileChartBarSolid size="md" class="-ml-1"  />Xlsx
-        </Button>
-    </div>
-</Toolbar>
+{#if $showExport }
+    <Toolbar class="w-full">
+        {#snippet end()}
+            <ExportReport></ExportReport>
+        {/snippet}
+    </Toolbar>
 {/if}
 
 <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-4">

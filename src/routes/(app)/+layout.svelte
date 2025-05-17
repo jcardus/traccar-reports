@@ -78,7 +78,7 @@ onMount(() => {
             {/each}
         </SidebarGroup>
     </Sidebar>
-    <div class="min-h-full h-96 overflow-auto px-4 md:ml-64 h-full">
+    <div class="min-h-full h-96 overflow-auto px-4 md:ml-64">
         <div class="p-4 dark:border-gray-700  h-full">
             {@render children()}
         </div>

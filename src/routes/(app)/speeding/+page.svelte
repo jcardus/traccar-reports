@@ -6,6 +6,7 @@
     let start = $state(undefined), end=$state(undefined), selected=$state([])
     const {data} = $props()
     let reportLoaded = $state(false)
+    let tbl
 
 </script>
 <div class="flex flex-col h-full">
@@ -28,7 +29,7 @@
             if (selected && selected.length && start && end) {
                 setTimeout(() => loadingReport = true, 100)
             } else {
-                setAlert('Please select devices and dates' + selected.length + start)
+                setAlert('Please select devices and dates')
             }
         }}>
             {#if loadingReport}

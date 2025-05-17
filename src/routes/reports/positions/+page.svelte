@@ -32,12 +32,13 @@
 <svelte:window on:afterprint={() => showExport=true} />
 
 {#if showExport }
-<Toolbar embedded class="w-full">
+<Toolbar class="w-full">
     <div class="p-2">
         <MultiSelect items={columns && columns.map(c => ({value: c, name: c}))} bind:value={columns} />
     </div>
-    <div slot="end" class="flex items-center space-x-1">
-        <Button size="sm" color="alternative" class="gap-1 px-2" on:click={() => {
+    {#snippet end()}
+    <div class="flex items-center space-x-1">
+        <Button size="sm" color="alternative" class="gap-1 px-2" onclick={() => {
             if (maximized) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen()
@@ -55,13 +56,13 @@
                 <ExpandOutline></ExpandOutline>
             {/if}
         </Button>
-        <Button size="sm" color="alternative" class="gap-2 px-3" on:click={() => {
+        <Button size="sm" color="alternative" class="gap-2 px-3" onclick={() => {
             showExport = false
             setTimeout(() => window.print(), 100)
         }}>
             <FilePdfSolid size="md" class="-ml-1"  />PDF
         </Button>
-        <Button size="sm" color="alternative" class="gap-2 px-3" on:click={() => {
+        <Button size="sm" color="alternative" class="gap-2 px-3" onclick={() => {
             const elt = tbl.getElementsByTagName("TABLE")[0];
             const wb = utils.table_to_book(elt);
             writeFileXLSX(wb, "speeding.xlsx");
@@ -69,6 +70,7 @@
             <FileChartBarSolid size="md" class="-ml-1"  />Xlsx
         </Button>
     </div>
+    {/snippet}
 </Toolbar>
 {/if}
 
