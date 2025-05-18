@@ -1,5 +1,6 @@
 export default {
     pt: {
+        "no data": 'Não há dados para o relatório',
         "time": "Hora",
         "Positions": "Posiciones",
         "Speeding": "Excessos de Velocidade",
@@ -13,6 +14,7 @@ export default {
         "vehicle": "Veículo"
     },
     es: {
+        "no data": 'No hay datos',
         "vehicle": "Vehículo",
         "map": "Mapa",
         "speeding": "Duración",

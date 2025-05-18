@@ -47,11 +47,14 @@
         {/snippet}
     </Toolbar>
 {/if}
-
-<Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-4">
-    {t('Speeding')}
-</Heading>
-
+    {#await data.events}
+    {:then events}
+        {#if !events.length}
+            <div class="text-xl text-gray-900 dark:text-white">{t('no data')}</div>
+        {:else}
+            <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-4">
+                {t('Speeding')}
+            </Heading>
 <div bind:this={tbl}>
     <Table hoverable="true" class="table-fixed p-0">
     <TableHead class="border-y border-gray-200 bg-gray-100 dark:border-gray-700">
@@ -63,11 +66,6 @@
         <TableHeadCell class="text-center w-[310px]">{t('map')}</TableHeadCell>
     </TableHead>
     <TableBody>
-        {#await data.events}
-            <div class="flex items-center justify-center h-full">
-                <Spinner></Spinner>
-            </div>
-            {:then events}
         {#each events as event}
             <TableBodyRow>
                 <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
@@ -134,12 +132,14 @@
                 </TableBodyCell>
             </TableBodyRow>
         {/each}
-            {/await}
     </TableBody>
 </Table>
 </div>
+        {/if}
+    {/await}
 </div>
 {/if}
+
 <style>
     @page {
         size: A4 landscape;
