@@ -92,6 +92,7 @@
                     <TableBodyCell class="p-0 text-center whitespace-normal ">
                         <a target="_blank"
                            href="/ces?{new URLSearchParams({
+                            name: data.devices.find(d => d.id === trip.deviceId)?.name,
                             deviceId: trip.deviceId,
                             from: trip.startTime,
                             to: trip.endTime})}"
