@@ -1,6 +1,6 @@
 {
 	"name": "traccar-reports",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",

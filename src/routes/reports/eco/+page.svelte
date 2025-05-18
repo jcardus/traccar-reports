@@ -90,7 +90,12 @@
                         <span title="{positions[positions.length-1]?.address}">{positions[positions.length-1]?.address}</span>
                     </TableBodyCell>
                     <TableBodyCell class="p-0 text-center whitespace-normal ">
-                        <a target="_blank" href="/ces{window.location.search}" aria-label="map">
+                        <a target="_blank"
+                           href="/ces?{new URLSearchParams({
+                            deviceId: trip.deviceId,
+                            from: trip.startTime,
+                            to: trip.endTime})}"
+                           aria-label="map">
                             <img src="{buildGoogleStaticMapURL(positions)}" alt="map">
                         </a>tr
                     </TableBodyCell>
