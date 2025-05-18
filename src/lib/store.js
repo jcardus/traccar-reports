@@ -7,6 +7,7 @@ export const session = writable(storedSession ? JSON.parse(storedSession) : {});
 export const error = writable(null);
 export const alert = writable(null);
 export const showExport = writable(true)
+export const loadingReport = writable(false)
 if (isClient) {
     session.subscribe((value) => {
         localStorage.setItem('session', JSON.stringify(value));

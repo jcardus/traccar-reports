@@ -6,14 +6,13 @@
         TableBodyCell,
         TableBodyRow,
         TableHead,
-        TableHeadCell, Toolbar
+        TableHeadCell, Toolbar, Spinner
     } from "flowbite-svelte";
     import { t } from "$lib/i18n";
     import SpeedLimitSign from "$lib/components/SpeedLimitSign.svelte";
     import {VisXYContainer, VisAxis, VisArea, VisTooltip, VisCrosshair, VisLine} from '@unovis/svelte'
     export let data;
-    export let devices;
-    import {showExport} from '$lib/store.js'
+    import {showExport, loadingReport} from '$lib/store.js'
 
     import {formatDuration, intervalToDuration} from "date-fns";
     import distance from "@turf/distance";
@@ -35,6 +34,11 @@
 </script>
 
 <svelte:window on:afterprint={() => showExport.set(true)} />
+{#if $loadingReport}
+    <div class="flex items-center justify-center h-full">
+        <Spinner></Spinner>
+    </div>
+{:else}
 <div style="padding: 10px">
 {#if $showExport }
     <Toolbar class="w-full">
@@ -59,7 +63,12 @@
         <TableHeadCell class="text-center w-[310px]">{t('map')}</TableHeadCell>
     </TableHead>
     <TableBody>
-        {#each data.events as event}
+        {#await data.events}
+            <div class="flex items-center justify-center h-full">
+                <Spinner></Spinner>
+            </div>
+            {:then events}
+        {#each events as event}
             <TableBodyRow>
                 <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
                     {event.device && event.device.name}
@@ -125,11 +134,12 @@
                 </TableBodyCell>
             </TableBodyRow>
         {/each}
+            {/await}
     </TableBody>
 </Table>
 </div>
 </div>
-
+{/if}
 <style>
     @page {
         size: A4 landscape;

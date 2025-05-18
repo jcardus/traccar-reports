@@ -1,6 +1,9 @@
-import {setLocale} from '$lib/i18n'
+import {loadingReport} from "$lib/store.js";
+
+export const ssr = false
 async function getEvents(selected, traccar, searchParams, request) {
-    const cookie = request.headers.get('cookie')
+    const cookie = request && request.headers.get('cookie')
+    loadingReport.set(true)
     let response = await fetch(`${traccar}/api/devices`, {headers: {cookie, redirect: 'follow'}})
     let devices = []
     if (response.ok) {
@@ -22,13 +25,14 @@ async function getEvents(selected, traccar, searchParams, request) {
             throw new Error('error status ' + response.status + ' ' + await response.text())
         }
     }
+    loadingReport.set(false)
     return result.flat()
 }
 
 async function getCountry(position, traccar, cookie) {
     let address = position.address
     if (!address) {
-        const url = `${traccar}/api/server/geocode?latitude=${position.latitude}&longitude=${position.longitude}`;
+        const url = `/api/server/geocode?latitude=${position.latitude}&longitude=${position.longitude}`;
         const response = await fetch(url, {headers: {cookie, redirect: 'follow'}})
         if (response.ok) {
             address = await response.text()
@@ -40,6 +44,7 @@ async function getCountry(position, traccar, cookie) {
     const c = address.split(',').slice(-1)[0].trim()
     switch (c) {
         case 'Brazil':
+        case 'Brasil':
             return 'BR'
         case 'Portugal':
             return 'PT'
@@ -52,12 +57,10 @@ async function getCountry(position, traccar, cookie) {
 
 
 export async function load({request, platform}) {
-    const traccar = (platform && platform.env.TRACCAR_SERVER) || import.meta.env.VITE_TRACCAR_SERVER
-    const locale = request.headers.get('accept-language')?.split(',')[0]
-    setLocale(locale)
-    const {searchParams} = new URL(request.url)
+    const traccar = (platform && platform.env.TRACCAR_SERVER) || import.meta.env.VITE_TRACCAR_SERVER || ''
+    const searchParams = new URLSearchParams(window.location.search)
     const selected = searchParams.get('selected').split(',')
-    return {locale, events: await getEvents(selected, `http://${traccar}`, searchParams, request)}
+    return {locale: navigator.language, events: getEvents(selected, `${traccar}`, searchParams, request)}
 }
 const minMinutes = 2
 function positionsFar(position1, position2) {
@@ -111,7 +114,7 @@ async function getSpeedEvents (devices, deviceIds, routes, threshold=0, minimumM
 let  countError = 0, countSuccess = 0
 async function invokeValhalla (route, i, chunk, country, threshold, results, retry = 3) {
     const slice = route.slice(i, i + chunk)
-    const url = `http://valhalla-${country}.pinme.io/trace_attributes`
+    const url = `https://valhalla-${country}.fleetmap.org/trace_attributes`
     const body = {
         costing: 'auto',
         shape_match: 'map_snap',
