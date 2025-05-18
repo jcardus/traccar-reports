@@ -3,7 +3,7 @@
 import {Alert} from "flowbite-svelte";
 import {alert, error, clearAlert, clearError} from '$lib/store'
 import {ExclamationCircleOutline, FileLinesSolid, InfoCircleSolid, TruckOutline} from "flowbite-svelte-icons";
-import { Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers, Tooltip } from "flowbite-svelte";
+import { Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers } from "flowbite-svelte";
 import { page } from "$app/state";
 import {t} from "$lib/i18n.js";
 import config from "tailwindcss/defaultTheme.js";
@@ -72,10 +72,6 @@ onMount(() => {
                             <Icon  />
                         {/snippet}
                     </SidebarItem>
-                    {#if (!lg)}
-                        <Tooltip placement="right" arrow={false}>{name}</Tooltip>
-                    {/if}
-
             {/each}
         </SidebarGroup>
     </Sidebar>

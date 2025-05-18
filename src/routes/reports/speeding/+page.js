@@ -57,10 +57,9 @@ async function getCountry(position, traccar, cookie) {
 
 
 export async function load({request, platform}) {
-    const traccar = (platform && platform.env.TRACCAR_SERVER) || import.meta.env.VITE_TRACCAR_SERVER || ''
     const searchParams = new URLSearchParams(window.location.search)
     const selected = searchParams.get('selected').split(',')
-    return {locale: navigator.language, events: getEvents(selected, `${traccar}`, searchParams, request)}
+    return {locale: navigator.language, events: getEvents(selected, '', searchParams, request)}
 }
 const minMinutes = 2
 function positionsFar(position1, position2) {
