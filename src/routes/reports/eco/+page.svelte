@@ -9,14 +9,9 @@
         TableHeadCell, Toolbar, Spinner
     } from "flowbite-svelte";
     import { t } from "$lib/i18n";
-    import SpeedLimitSign from "$lib/components/SpeedLimitSign.svelte";
-    import {VisXYContainer, VisAxis, VisArea, VisTooltip, VisCrosshair, VisLine} from '@unovis/svelte'
     export let data;
     import {showExport, loadingReport} from '$lib/store.js'
 
-    import {formatDuration, intervalToDuration} from "date-fns";
-    import distance from "@turf/distance";
-    import {point} from "@turf/helpers";
     import { es, pt } from 'date-fns/locale';
     import ExportReport from "$lib/components/ExportReport.svelte";
     const locales = { es, pt };
@@ -36,7 +31,6 @@
         let markers = `markers=label:A|${start.latitude},${start.longitude}&markers=label:B|${end.latitude},${end.longitude}`
         return `${baseUrl}${size}&${markers}&${path}&key=${apiKey}`
     }
-    const template = d => `${new Date(d.fixTime).toLocaleTimeString()}<br>${Math.round(d.speed * 1.852)} km/h`
     async function getPositions(trip) {
         const response = await fetch('/api/positions?' + new URLSearchParams({
             deviceId: trip.deviceId,
@@ -78,8 +72,6 @@
         <TableHeadCell class="text-center w-64">{t('start')} (A)</TableHeadCell>
         <TableHeadCell class="text-center w-64">{t('end')} (B)</TableHeadCell>
         <TableHeadCell class="text-center w-64"></TableHeadCell>
-        <TableHeadCell class="text-center p-0 w-64">{t('speeding')}</TableHeadCell>
-        <TableHeadCell class="text-center w-[310px]">{t('map')}</TableHeadCell>
     </TableHead>
     <TableBody>
         {#each trips as trip}
@@ -89,55 +81,19 @@
                 </TableBodyCell>
                 {#await getPositions(trip)}
                 {:then positions}
-                <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
-                    {new Date(trip.startTime).toLocaleString()}<br>
-                    <span title="{positions[0]?.address}">{positions[0]?.address}</span>
-                </TableBodyCell>
-                <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
-                    {new Date(trip.endTime).toLocaleString()}<br>
-                    <span title="{positions[positions.length-1]?.address}">{positions[positions.length-1]?.address}</span>
-                </TableBodyCell>
-                <TableBodyCell class="p-0 text-center whitespace-normal ">
-                    <a target="_blank" href="http://localhost:5174/ces{window.location.search}">
-                        <img src="{buildGoogleStaticMapURL(positions)}">
-                    </a>tr
-                </TableBodyCell>
-                <!--TableBodyCell class="text-center {event.positions.length === 1 && 'text-lg'}">
-                    {#if event.positions.length > 1}
-                        <VisXYContainer height="100" data={event.positions}>
-                            <VisArea color="darkgreen" opacity={0.2} x={d => new Date(d.fixTime)} y={d => d.speed*1.852} />
-                            <VisLine color="darkgreen" x={d => new Date(d.fixTime)} y={d => d.speed*1.852} />
-                            <VisLine color="red" strokeDasharray="5,5" x={d => new Date(d.fixTime)} y={event.edges[0].speed_limit} />
-                            <VisAxis type="x" tickFormat="{(x) => new Date(x).toLocaleTimeString()}" />
-                            <VisAxis type="y" />
-                            <VisCrosshair {template}></VisCrosshair>
-                            <VisTooltip/>
-                        </VisXYContainer>
-                        {
-                            formatDuration(intervalToDuration({
-                                start: new Date(event.positions[0].fixTime),
-                                end: new Date(event.positions.slice(-1)[0].fixTime)
-                            }), {locale: locales[data.locale] || pt})
-                        }
-                        {
-                            event.positions.reduce((acc, current, index, positions) => {
-                                if (index === 0) return acc
-                                const previousPosition = positions[index - 1]
-                                const point1 = point([previousPosition.longitude, previousPosition.latitude])
-                                const point2 = point([current.longitude, current.latitude])
-                                return acc + distance(point1, point2, { units: 'kilometers' })
-                            }, 0).toFixed(1) + ' km'
-                        }
-                        <br>
-                        {
-                            (event.positions.reduce((acc, current) => current.speed > acc ? current.speed : acc, 0) * 1.852).toFixed(1)
-                        } km/h
-
-                    {:else}
-                        {(event.positions[0].speed * 1.852).toFixed(1)} km/h
-                    {/if}
-                </TableBodyCell-->
-
+                    <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
+                        {new Date(trip.startTime).toLocaleString()}<br>
+                        <span title="{positions[0]?.address}">{positions[0]?.address}</span>
+                    </TableBodyCell>
+                    <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
+                        {new Date(trip.endTime).toLocaleString()}<br>
+                        <span title="{positions[positions.length-1]?.address}">{positions[positions.length-1]?.address}</span>
+                    </TableBodyCell>
+                    <TableBodyCell class="p-0 text-center whitespace-normal ">
+                        <a target="_blank" href="/ces{window.location.search}" aria-label="map">
+                            <img src="{buildGoogleStaticMapURL(positions)}" alt="map">
+                        </a>tr
+                    </TableBodyCell>
                 {/await}
             </TableBodyRow>
         {/each}
