@@ -49,7 +49,13 @@
     (() => {
         let endDate = new Date(end);
         endDate.setHours(23, 59, 59, 999);
-        return `/reports${page.url.pathname}?start=${new Date(start).toISOString()}&end=${endDate.toISOString()}&selected=${selected}`;
+        return `/reports${page.url.pathname
+            }?start=${new Date(start).toISOString()
+            }&from=${new Date(start).toISOString()
+            }&to=${endDate.toISOString()
+            }&end=${endDate.toISOString()
+            }&${selected.map(s => 'deviceId='+s).join('&')
+            }&selected=${selected}`;
     })()
 }"></iframe>
     {/if}

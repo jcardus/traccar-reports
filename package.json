@@ -11,6 +11,7 @@
 		"gh-pages": "pnpm run build && npx gh-pages -d build"
 	},
 	"devDependencies": {
+		"@mapbox/polyline": "github:mapbox/polyline",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-cloudflare": "^4.7.2",
 		"@sveltejs/adapter-static": "^3.0.4",
