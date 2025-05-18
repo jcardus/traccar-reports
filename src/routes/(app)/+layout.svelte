@@ -2,7 +2,7 @@
     import "../../app.css";
 import {Alert} from "flowbite-svelte";
 import {alert, error, clearAlert, clearError} from '$lib/store'
-import {ExclamationCircleOutline, FileLinesSolid, InfoCircleSolid} from "flowbite-svelte-icons";
+import {ExclamationCircleOutline, FileLinesSolid, InfoCircleSolid, TruckOutline} from "flowbite-svelte-icons";
 import { Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers, Tooltip } from "flowbite-svelte";
 import { page } from "$app/state";
 import {t} from "$lib/i18n.js";
@@ -42,6 +42,7 @@ const unsubscribeAlert = alert.subscribe(value => {
 let items = [
     { name: t('Positions'), Icon: FileLinesSolid, href: '/reports/positions' },
     { name: t('Speeding'), Icon: ExclamationCircleOutline, href: '/reports/speeding' },
+    { name: t('ECO driving'), Icon: TruckOutline, href: '/reports/eco' }
 ];
 let lg,sm;
 const checkWidth = () => {
@@ -61,7 +62,7 @@ onMount(() => {
 <div class="relative h-full">
     <Sidebar {activeUrl} backdrop={false} isOpen={isDemoOpen} closeSidebar={closeDemoSidebar} params={{ x: -50, duration: 50 }} class="z-50 h-full" position="absolute" activeClass="p-2" nonActiveClass="p-2">
         <SidebarGroup>
-            {#each items as { name, Icon, children, href } (name)}
+            {#each items as { name, Icon, href } (name)}
                     <SidebarItem
                             label={name}
                             {href}

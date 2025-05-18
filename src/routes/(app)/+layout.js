@@ -1,7 +1,5 @@
 import {goto} from "$app/navigation";
-
 export const ssr = false
-
 export async function load({fetch}) {
     try {
         const response = await fetch('/api/devices');
