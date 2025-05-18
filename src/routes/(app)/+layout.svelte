@@ -6,7 +6,8 @@ import {ExclamationCircleOutline, FileLinesSolid, InfoCircleSolid, TruckOutline}
 import { Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers } from "flowbite-svelte";
 import { page } from "$app/state";
 import {t} from "$lib/i18n.js";
-import config from "tailwindcss/defaultTheme.js";
+// noinspection JSFileReferences
+import config from 'tailwindcss/defaultTheme.js'
 import {onMount} from "svelte";
 let activeUrl = $state(page.url.pathname);
 

@@ -56,7 +56,7 @@ async function getCountry(position, traccar, cookie) {
 }
 
 
-export async function load({request, platform}) {
+export async function load({request}) {
     const searchParams = new URLSearchParams(window.location.search)
     const selected = searchParams.get('selected').split(',')
     return {locale: navigator.language, events: getEvents(selected, '', searchParams, request)}
