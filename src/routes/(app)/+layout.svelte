@@ -57,11 +57,16 @@ onMount(() => {
         window.removeEventListener('resize', checkWidth);
     };
 })
+    const sidebar = page.url.searchParams.get('sidebar') !== '0'
 </script>
 
-<SidebarButton onclick={demoSidebarUi.toggle} class="mb-2" />
+
+{#if sidebar}
+    <SidebarButton onclick={demoSidebarUi.toggle} class="mb-2" />
+{/if}
 <div class="relative h-full">
-    <Sidebar {activeUrl} backdrop={false} isOpen={isDemoOpen} closeSidebar={closeDemoSidebar} params={{ x: -50, duration: 50 }} class="z-50 h-full" position="absolute" activeClass="p-2" nonActiveClass="p-2">
+    {#if sidebar}
+        <Sidebar {activeUrl} backdrop={false} isOpen={isDemoOpen} closeSidebar={closeDemoSidebar} params={{ x: -50, duration: 50 }} class="z-50 h-full" position="absolute" activeClass="p-2" nonActiveClass="p-2">
         <SidebarGroup>
             {#each items as { name, Icon, href } (name)}
                     <SidebarItem
@@ -76,11 +81,16 @@ onMount(() => {
             {/each}
         </SidebarGroup>
     </Sidebar>
-    <div class="min-h-full h-96 overflow-auto px-4 md:ml-64">
+        <div class="min-h-full h-96 overflow-auto px-4 md:ml-64">
+            <div class="p-4 dark:border-gray-700  h-full">
+                {@render children()}
+            </div>
+        </div>
+    {:else}
         <div class="p-4 dark:border-gray-700  h-full">
             {@render children()}
         </div>
-    </div>
+    {/if}
 </div>
 {#if alertMessage}
     <div class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
