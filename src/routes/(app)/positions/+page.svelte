@@ -46,6 +46,6 @@
         end = new Date(end);
         end.setHours(23, 59, 59, 999);
     }} title="report" class="h-full w-full pb-4" src="{
-        `/reports/reports/positions?start=${new Date(start).toISOString()}&end=${new Date(end).toISOString()}&selected=${selected}`
+        `/treports/reports/positions?start=${new Date(start).toISOString()}&end=${new Date(end).toISOString()}&selected=${selected}`
     }"></iframe>
 {/if}

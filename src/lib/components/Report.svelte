@@ -5,7 +5,7 @@
     import { page } from '$app/state';
     let loadingReport = $state(false)
     let start = $state(undefined), end=$state(undefined), selected=$state([])
-    const {devices} = $props()
+    const {devices, report} = $props()
     let reportLoaded = $state(false)
     let tbl
 
@@ -49,7 +49,7 @@
     (() => {
         let endDate = new Date(end);
         endDate.setHours(23, 59, 59, 999);
-        return `/reports${page.url.pathname
+        return `/treports/reports/${report
             }?start=${new Date(start).toISOString()
             }&from=${new Date(start).toISOString()
             }&to=${endDate.toISOString()

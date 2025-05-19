@@ -41,9 +41,9 @@ const unsubscribeAlert = alert.subscribe(value => {
     }
 });
 let items = [
-    { name: t('Positions'), Icon: FileLinesSolid, href: '/reports/positions' },
-    { name: t('Speeding'), Icon: ExclamationCircleOutline, href: '/reports/speeding' },
-    { name: t('ECO driving'), Icon: TruckOutline, href: '/reports/eco' }
+    { name: t('Positions'), Icon: FileLinesSolid, href: '/treports/positions' },
+    { name: t('Speeding'), Icon: ExclamationCircleOutline, href: '/treports/speeding' },
+    { name: t('ECO driving'), Icon: TruckOutline, href: '/treports/eco' }
 ];
 let lg,sm;
 const checkWidth = () => {

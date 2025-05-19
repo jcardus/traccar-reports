@@ -2,6 +2,7 @@
     import Report from "$lib/components/Report.svelte";
     const {data} = $props()
     let {devices} = data
+    const report = 'eco'
 </script>
 
-<Report {devices}></Report>
+<Report {devices} {report}></Report>
