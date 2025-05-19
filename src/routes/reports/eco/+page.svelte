@@ -130,7 +130,6 @@
                                     <b>{t('harshBrakes')}:</b> {events.filter(e => e.attributes.alarm === 'hardBraking').length}<br>
                                     <b>{t('harshCornering')}:</b> {events.filter(e => e.attributes.alarm === 'hardCornering').length}<br>
                                     <b>{t('harshAccelerations')}:</b> {events.filter(e => e.attributes.alarm === 'hardAcceleration').length}<br>
-                                    <b>{t('harshAccelerations')}:</b> {events.map(e => e.attributes.alarm || e.type).join(',')}<br>
                                     <b>{t('fuelUsed')}:</b> {trip.spentFuel.toFixed(1)}l<br>
                                     <b>{t('consumption')}: {Math.min((trip.spentFuel/(trip.distance/100000)).toFixed(1), 50)} l/100</b><br>
                                     <Rating id="example-1b" icon={wrapper({ fillColor: "#008800", strokeColor: "#008800" })} total={5} size={35} rating={5 - events.length/2}>

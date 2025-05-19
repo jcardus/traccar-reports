@@ -20,7 +20,8 @@ export default {
         consumption: 'Consumo',
         avgSpeed: 'Velocidade Média',
         harshBrakes: 'Travagens bruscas',
-        harshAccelerations: 'Acelerações bruscas'
+        harshAccelerations: 'Acelerações bruscas',
+        harshCornering: 'Viragens bruscas'
     },
     es: {
         consumption: 'Consumo',
