@@ -1,40 +1,44 @@
 <script>
-    import {Button, Toolbar, Spinner, Datepicker, MultiSelect} from "flowbite-svelte";
+    import {Button, Toggle, Toolbar, Spinner, Datepicker, MultiSelect} from "flowbite-svelte";
     import {setAlert} from "$lib/store.js";
     import {t} from "$lib/i18n.js"
     let loadingReport = $state(false)
-    let start = $state(undefined), end=$state(undefined), selected=$state('')
+    let start = $state(undefined), end=$state(undefined), selected=$state(''), selectAll=$state(false)
     const {devices, report} = $props()
     let reportLoaded = $state(false)
     let tbl
 
-    function selectAllClicked() {
-        selected = devices.map(d => d.id)
-    }
+    $effect(() => {
+        if (selectAll) {
+            selected = []
+        }
+    })
 
 </script>
-{selected.length} {devices.length}
+{selectAll}
 <div class="flex flex-col h-full">
     <Toolbar>
-        <div class="p-4 w-full flex gap-4" >
+        <div class="p-2 w-full flex gap-2" >
             <MultiSelect
+                disabled={selectAll}
                 placeholder="{t('Select devices')}..."
                 items={devices.sort((a, b) => a.name.localeCompare(b.name)).map(d => ({value: d.id, name: d.name}))}
                 bind:value={selected}
-                size="lg"
+                size="xs"
+                class="p-2"
             />
             {#if !selected.length || selected.length !== devices.length}
-                <Button outline size="xs" onclick={selectAllClicked}>{t('Seleccionar todos')}</Button>
+                <Toggle bind:checked={selectAll}>{t('Seleccionar todos')}</Toggle>
             {/if}
         </div>
-        <div class="w-72 p-4">
+        <div class="w-72 p-2">
             <Datepicker locale={navigator.language} range bind:rangeFrom={start} bind:rangeTo={end}></Datepicker>
         </div>
-        <div class="p-4">
+        <div class="p-3">
             <Button onclick={() => {
             loadingReport = false
             reportLoaded = false
-            if (selected && selected.length && start && end) {
+            if ((selectAll || selected.length) && start && end) {
                 setTimeout(() => loadingReport = true, 100)
             } else {
                 setAlert('Please select devices and dates')
@@ -52,7 +56,7 @@
         <iframe onload={() => {
         reportLoaded=true
         loadingReport=false
-    }} title="report" class="flex-grow" src="{
+    }} title="report" class="p-4 flex-grow" src="{
     (() => {
         let endDate = new Date(end);
         endDate.setHours(23, 59, 59, 999);
@@ -61,7 +65,7 @@
             }&from=${new Date(start).toISOString()
             }&to=${endDate.toISOString()
             }&end=${endDate.toISOString()
-            }&${selected.map(s => 'deviceId='+s).join('&')
+            }&${selectAll ? devices.map(d => 'deviceId='+d.id).join('&') : selected.map(s => 'deviceId='+s).join('&')
             }&selected=${selected}`;
     })()
 }"></iframe>
