@@ -18,6 +18,10 @@
     let tbl
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY
     import polyline from '@mapbox/polyline';
+    import {formatDuration, intervalToDuration} from "date-fns";
+    import { Rating, Star } from "flowbite-svelte";
+    const wrapper = (props) => (anchor, _props) => Star(anchor, { ..._props, ...props });
+
 
 
     function buildGoogleStaticMapURL(coordinates) {
@@ -62,34 +66,35 @@
         {#if !trips.length}
             <div class="text-xl text-gray-900 dark:text-white">{t('no data')}</div>
         {:else}
-            <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-4">
+            <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">
                 {t('ECO driving')}
             </Heading>
 <div bind:this={tbl}>
     <Table hoverable="true" class="table-fixed p-0">
     <TableHead class="border-y border-gray-200 bg-gray-100 dark:border-gray-700">
         <TableHeadCell class="text-center w-24">{t('vehicle')}</TableHeadCell>
-        <TableHeadCell class="text-center w-64">{t('start')} (A)</TableHeadCell>
-        <TableHeadCell class="text-center w-64">{t('end')} (B)</TableHeadCell>
-        <TableHeadCell class="text-center w-64"></TableHeadCell>
+        <TableHeadCell class="text-center">{t('start')} (A)</TableHeadCell>
+        <TableHeadCell class="text-center">{t('end')} (B)</TableHeadCell>
+        <TableHeadCell class="text-center">{t('route3d')}</TableHeadCell>
+        <TableHeadCell class="text-center">{t('rating')}</TableHeadCell>
     </TableHead>
     <TableBody>
         {#each trips as trip}
             <TableBodyRow>
-                <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
+                <TableBodyCell class="text-wrap">
                     {data.devices.find(d => d.id === trip.deviceId)?.name}
                 </TableBodyCell>
                 {#await getPositions(trip)}
                 {:then positions}
-                    <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
-                        {new Date(trip.startTime).toLocaleString()}<br>
-                        <span title="{positions[0]?.address}">{positions[0]?.address}</span>
+                    <TableBodyCell class="text-center">
+                        <b>{new Date(trip.startTime).toLocaleString()}</b><br>
+                        <span class="text-wrap text-xs" title="{positions[0]?.address}">{positions[0]?.address}</span>
                     </TableBodyCell>
-                    <TableBodyCell class="text-center overflow-hidden overflow-ellipsis p-0">
-                        {new Date(trip.endTime).toLocaleString()}<br>
-                        <span title="{positions[positions.length-1]?.address}">{positions[positions.length-1]?.address}</span>
+                    <TableBodyCell class="text-center">
+                        <b>{new Date(trip.endTime).toLocaleString()}</b><br>
+                        <span class="text-wrap text-xs" title="{positions[positions.length-1]?.address}">{positions[positions.length-1]?.address}</span>
                     </TableBodyCell>
-                    <TableBodyCell class="p-0 text-center whitespace-normal ">
+                    <TableBodyCell>
                         <a target="_blank"
                            href="/ces?{new URLSearchParams({
                             name: data.devices.find(d => d.id === trip.deviceId)?.name,
@@ -98,7 +103,23 @@
                             to: trip.endTime})}"
                            aria-label="map">
                             <img src="{buildGoogleStaticMapURL(positions)}" alt="map">
-                        </a>tr
+                        </a>
+                    </TableBodyCell>
+                    <TableBodyCell>
+                        <b>{Math.round(trip.distance/1000)} Kms</b>, {t('avgSpeed')}: {trip.averageSpeed.toFixed(1)} Km/h<br>
+                        <b>{formatDuration(intervalToDuration({
+                            start: new Date(positions[0].fixTime),
+                            end: new Date(positions.slice(-1)[0].fixTime)
+                        }), {locale: locales[window.navigator.language] || pt})}</b><br>
+                        <b>{t('harshBrakes')}:</b> 0<br>
+                        <b>{t('harshAccelerations')}:</b> 0<br>
+                        <b>{t('fuelUsed')}:</b> {trip.spentFuel.toFixed(1)}l<br>
+                        <b>{t('consumption')}: {Math.min((trip.spentFuel/(trip.distance/100000)).toFixed(1), 50)} l/100</b><br>
+                        <Rating id="example-1b" icon={wrapper({ fillColor: "#008800", strokeColor: "#008800" })} total={5} size={35} rating={trip.averageSpeed%5}>
+                            {#snippet text()}
+                                <p class="p-2 text-xl"> {(trip.averageSpeed%5).toFixed(1)}</p>
+                            {/snippet}
+                        </Rating>
                     </TableBodyCell>
                 {/await}
             </TableBodyRow>

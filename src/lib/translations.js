@@ -14,9 +14,18 @@ export default {
         'map': 'Mapa',
         'vehicle': 'Veículo',
         'start': 'Início',
-        end: 'Fim'
+        end: 'Fim',
+        route3d: 'Rota 3D',
+        fuelUsed: 'Combustível',
+        consumption: 'Consumo',
+        avgSpeed: 'Velocidade Média',
+        harshBrakes: 'Travagens bruscas',
+        harshAccelerations: 'Acelerações bruscas'
     },
     es: {
+        consumption: 'Consumo',
+        fuelUsed: 'Combustible',
+        route3d: 'Ruta 3D',
         end: 'Fin',
         'start': 'Início',
         'no data': 'No hay datos',
