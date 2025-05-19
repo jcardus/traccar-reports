@@ -2,7 +2,6 @@
     import {Button, Toolbar, Spinner, Datepicker, MultiSelect} from "flowbite-svelte";
     import {setAlert} from "$lib/store.js";
     import {t} from "$lib/i18n.js"
-    import { page } from '$app/state';
     let loadingReport = $state(false)
     let start = $state(undefined), end=$state(undefined), selected=$state([])
     const {devices, report} = $props()
