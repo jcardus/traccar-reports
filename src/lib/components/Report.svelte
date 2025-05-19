@@ -3,21 +3,29 @@
     import {setAlert} from "$lib/store.js";
     import {t} from "$lib/i18n.js"
     let loadingReport = $state(false)
-    let start = $state(undefined), end=$state(undefined), selected=$state([])
+    let start = $state(undefined), end=$state(undefined), selected=$state('')
     const {devices, report} = $props()
     let reportLoaded = $state(false)
     let tbl
 
+    function selectAllClicked() {
+        selected = devices.map(d => d.id)
+    }
+
 </script>
+{selected.length} {devices.length}
 <div class="flex flex-col h-full">
     <Toolbar>
-        <div class="p-4 w-full" >
+        <div class="p-4 w-full flex gap-4" >
             <MultiSelect
-                    placeholder="{t('Select devices')}..."
-                    items={devices.sort((a, b) => a.name.localeCompare(b.name)).map(d => ({value: d.id, name: d.name}))}
-                    bind:value={selected}
-                    size="lg"
+                placeholder="{t('Select devices')}..."
+                items={devices.sort((a, b) => a.name.localeCompare(b.name)).map(d => ({value: d.id, name: d.name}))}
+                bind:value={selected}
+                size="lg"
             />
+            {#if !selected.length || selected.length !== devices.length}
+                <Button outline size="xs" onclick={selectAllClicked}>{t('Seleccionar todos')}</Button>
+            {/if}
         </div>
         <div class="w-72 p-4">
             <Datepicker locale={navigator.language} range bind:rangeFrom={start} bind:rangeTo={end}></Datepicker>

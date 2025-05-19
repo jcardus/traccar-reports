@@ -1,4 +1,8 @@
 export default {
+    fr: {
+        'Select devices': "Sélectionner des véhicules",
+        'Seleccionar todos': 'Sélectionner tous'
+    },
     pt: {
         'eco driving': '',
         'no data': 'Não há dados para o relatório',
@@ -24,6 +28,7 @@ export default {
         harshCornering: 'Viragens bruscas'
     },
     es: {
+        'Select all': 'Seleccionar todos',
         consumption: 'Consumo',
         fuelUsed: 'Combustible',
         route3d: 'Ruta 3D',
