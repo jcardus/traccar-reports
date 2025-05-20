@@ -125,6 +125,7 @@
                 </TableBodyRow>
             {:then trips}
             {#each trips as trip}
+                {#if progress >= 100}
             <TableBodyRow>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
                     {devices.find(d => d.id === trip.deviceId)?.name}
@@ -179,6 +180,7 @@
                     {Math.round(trip.spentFuel/trip.distance)}
                 </TableBodyCell>
             </TableBodyRow>
+                    {/if}
             {/each}
             {/await}
         {/each}
