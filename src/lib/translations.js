@@ -24,9 +24,9 @@ export default {
         fuelUsed: 'Consumo',
         consumption: 'Consumo médio',
         avgSpeed: 'Velocidade Média',
-        harshBrakes: 'Travagens bruscas',
+        harshBrakes: 'Frenanges bruscas',
         harshAccelerations: 'Acelerações bruscas',
-        harshCornering: 'Viragens bruscas'
+        harshCornering: 'Curvas bruscas'
     },
     es: {
         'Select all': 'Seleccionar todos',
