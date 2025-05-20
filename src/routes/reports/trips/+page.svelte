@@ -20,11 +20,6 @@
     import {onMount} from "svelte";
     let progress = $state(0)
 
-    function getDriver(trip) {
-        const uniqueId = devices.find(d => d.id === trip.deviceId)?.attributes.driverUniqueId
-        return drivers.find(d => d.uniqueId === uniqueId)
-    }
-
     const promises = {}
     const tripsByDevice = {}
     function getTrips(deviceId) {
@@ -130,19 +125,18 @@
         {#if progress >= 100}
         {#each devices as device}
             {#each tripsByDevice[device.id] as trip}
-
-                    <TableBodyRow>
+                <TableBodyRow>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {devices.find(d => d.id === trip.deviceId)?.name}
+                    {device.name}
                 </TableBodyCell>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {groups.find(d => d.id === devices.find(d => d.id === trip.deviceId)?.groupId)?.name}
+                    {groups.find(g => g.id === device.groupId)?.name}
                 </TableBodyCell>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {devices.find(d => d.id === trip.deviceId)?.model}
+                    {device.model}
                 </TableBodyCell>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {getDriver(trip)?.name}
+                    {drivers.find(d => d.uniqueId === device.attributes.driverUniqueId)?.name}
                 </TableBodyCell>
                 <TableBodyCell class="text-2xs p-1">
                     {new Date(trip.startTime).toLocaleDateString()}
