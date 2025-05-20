@@ -15,7 +15,6 @@
     })
 
 </script>
-{selectAll}
 <div class="flex flex-col h-full">
     <Toolbar>
         <div class="p-2 w-full flex gap-2" >
