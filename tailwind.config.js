@@ -5,6 +5,9 @@ export default {
   darkMode: 'media',
   theme: {
     extend: {
+      fontSize: {
+        '2xs': '0.6rem'
+      },
       colors: {
         // flowbite-svelte
         primary: {

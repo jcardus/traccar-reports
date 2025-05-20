@@ -1,8 +1,6 @@
 export async function load({fetch}) {
-    const response = await fetch('/api/devices');
-    if (response.ok) {
-        const devices = await response.json()
-        return {devices: devices.slice(0, 500)}
-    }
-    return {devices: []}
+    const devices = await fetch('/api/devices').then(r => r.json())
+    const groups = await fetch('/api/groups').then(r => r.json())
+    const drivers = await fetch('/api/drivers').then(r => r.json())
+    return {devices, groups, drivers}
 }

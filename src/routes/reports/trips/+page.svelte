@@ -1,7 +1,7 @@
 <script>
     import {
         Button, Heading,
-        Table, Badge,
+        Table,
         TableBody,
         TableBodyCell,
         TableBodyRow,
@@ -16,6 +16,12 @@
     let tbl
     let maximized = $state(false)
     import {loadingReport} from '$lib/store'
+    import {formatDuration, intervalToDuration} from "date-fns";
+
+    function getDriver(trip) {
+        const uniqueId = data.devices.find(d => d.id === trip.deviceId)?.attributes.driverUniqueId
+        return data.drivers.find(d => d.uniqueId === uniqueId)
+    }
 
 </script>
 
@@ -65,40 +71,87 @@
 </Toolbar>
 {/if}
 
-<Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+<Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">
     {t('Rapport de voyage')}
 </Heading>
     {#await data.trips}
     {:then trips}
-<div class="p-2">
-    <Badge>{trips.length}</Badge>
-</div>
+
 <div bind:this={tbl}>
-    <Table hoverable="true">
+    <Table hoverable striped>
     <TableHead>
-        <TableHeadCell class="text-center">Véhicule</TableHeadCell>
-        <TableHeadCell class="text-center">Groupe</TableHeadCell>
-        <TableHeadCell class="text-center">Modèle</TableHeadCell>
-        <TableHeadCell class="text-center">Conducteur</TableHeadCell>
-        <TableHeadCell class="text-center">Date</TableHeadCell>
-        <TableHeadCell class="text-center">Commencer</TableHeadCell>
-        <TableHeadCell class="text-center">Fin</TableHeadCell>
-        <TableHeadCell class="text-center">Destin</TableHeadCell>
-        <TableHeadCell class="text-center">Durée</TableHeadCell>
-        <TableHeadCell class="text-center">tourner au ralenti</TableHeadCell>
-        <TableHeadCell class="text-center">Arrêt</TableHeadCell>
-        <TableHeadCell class="text-center">Distance</TableHeadCell>
-        <TableHeadCell class="text-center">Vitesse moyenne</TableHeadCell>
-        <TableHeadCell class="text-center">Vitesse maximale</TableHeadCell>
-        <TableHeadCell class="text-center">Consommation (L)</TableHeadCell>
-        <TableHeadCell class="text-center">Consommation (L/100)</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Véhicule</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Groupe</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Modèle</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Conducteur</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Date</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Commencer</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Fin</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Destin</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Durée</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Ralenti</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Arrêt</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Distance</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Vit. moyenne</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Vit. maximale</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Consom. (L)</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-0">Consom. (L/100)</TableHeadCell>
     </TableHead>
     <TableBody>
         {#each trips as trip}
             <TableBodyRow>
-                    <TableBodyCell >
-                        {data.devices.find(d => d.id === trip.deviceId).name}
-                    </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {data.devices.find(d => d.id === trip.deviceId)?.name}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {data.groups.find(d => d.id === data.devices.find(d => d.id === trip.deviceId)?.groupId)?.name}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {data.devices.find(d => d.id === trip.deviceId)?.model}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {getDriver(trip)?.name}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {new Date(trip.startTime).toLocaleDateString()}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {new Date(trip.startTime).toLocaleTimeString()}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {new Date(trip.endTime).toLocaleTimeString()}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1 text-wrap">
+                    {trip.endAddress}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1 text-wrap">
+                    {formatDuration(intervalToDuration({
+                        start: new Date(trip.startTime),
+                        end: new Date(trip.endTime)
+                    }))
+                    }
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    0
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    0
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {Math.round(trip.distance/1000)}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {Math.round(trip.averageSpeed*1.852)}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {Math.round(trip.maxSpeed*1.852)}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {trip.spentFuel}
+                </TableBodyCell>
+                <TableBodyCell class="text-2xs p-1">
+                    {Math.round(trip.spentFuel/trip.distance)}
+                </TableBodyCell>
             </TableBodyRow>
         {/each}
 
@@ -110,7 +163,7 @@
 <style>
     @page {
         size: A4 landscape;
-        margin: 10mm;
+        margin: 2mm;
     }
     div {
         print-color-adjust: exact;
