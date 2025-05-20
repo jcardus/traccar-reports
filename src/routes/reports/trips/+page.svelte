@@ -22,6 +22,7 @@
     let deviceCount = 20
     let _devices = $state(devices.slice(0, deviceCount))
     let labelOutside = $state('')
+    let generatingXls = $state(false)
 
     const promises = {}
     const tripsByDevice = {}
@@ -86,11 +87,24 @@
             <FilePdfSolid size="md" class="-ml-1"  />PDF
         </Button>
         <Button size="sm" color="alternative" class="gap-2 px-3" onclick={() => {
-            const elt = tbl.getElementsByTagName("TABLE")[0];
-            const wb = utils.table_to_book(elt);
-            writeFileXLSX(wb, "speeding.xlsx");
+            generatingXls = true
+            setTimeout(() => {
+                const before = _devices
+                _devices = devices
+                requestAnimationFrame(() => {
+                    const elt = tbl.getElementsByTagName("TABLE")[0];
+                    const wb = utils.table_to_book(elt);
+                    writeFileXLSX(wb, "trips.xlsx");
+                    _devices = before
+                    generatingXls = false
+                })
+            }, 10)
         }}>
-            <FileChartBarSolid size="md" class="-ml-1"  />Xlsx
+            {#if generatingXls}
+                <Spinner class="me-3" size="4" color="white"/>
+            {:else}
+                <FileChartBarSolid size="md" class="-ml-1"  />Xlsx
+            {/if}
         </Button>
     </div>
     {/snippet}
@@ -108,7 +122,7 @@
 
 <div bind:this={tbl} class="overflow-auto max-h-[80vh]">
 
-    <Table hoverable striped>
+    <Table hoverable striped class="{generatingXls && 'hidden'}">
     <TableHead>
         <TableHeadCell class="text-center text-2xs p-1">Véhicule</TableHeadCell>
         <TableHeadCell class="text-center text-2xs p-1">Groupe</TableHeadCell>
