@@ -1,7 +1,8 @@
 export default {
     fr: {
         'Select devices': "Sélectionner des véhicules",
-        'Seleccionar todos': 'Sélectionner tous'
+        'Seleccionar todos': 'Sélectionner tous',
+        'Gerar': "Générer"
     },
     pt: {
         'eco driving': '',
