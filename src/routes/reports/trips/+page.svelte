@@ -5,33 +5,53 @@
         TableBody,
         TableBodyCell,
         TableBodyRow,
-        TableHead,
-        TableHeadCell, Toolbar, Spinner
+        TableHead, Progressbar,
+        TableHeadCell, Toolbar
     } from "flowbite-svelte";
     import { t } from "$lib/i18n";
     import {ExpandOutline, FileChartBarSolid, FilePdfSolid, MinimizeOutline} from "flowbite-svelte-icons";
     import { utils, writeFileXLSX } from 'xlsx';
     const { data } = $props();
+    const {devices, drivers, groups} = data
     let showExport = $state(true)
     let tbl
     let maximized = $state(false)
-    import {loadingReport} from '$lib/store'
     import {formatDuration, intervalToDuration} from "date-fns";
+    import {onMount} from "svelte";
+    let progress = $state(0)
 
     function getDriver(trip) {
         const uniqueId = data.devices.find(d => d.id === trip.deviceId)?.attributes.driverUniqueId
-        return data.drivers.find(d => d.uniqueId === uniqueId)
+        return drivers.find(d => d.uniqueId === uniqueId)
     }
+
+    const tripsByDevice = {}
+    function getTrips(deviceId) {
+        if (!tripsByDevice[deviceId]) {
+            const params = new URLSearchParams(window.location.search)
+            const newParams = new URLSearchParams({
+                deviceId,
+                from: params.get('from'),
+                to: params.get('to')
+            })
+            tripsByDevice[deviceId] = fetch('/api/reports/trips?' + newParams).then(r => r.json())
+        }
+        return tripsByDevice[deviceId]
+    }
+
+    onMount(async () => {
+        let i = 1
+        for (const d of devices) {
+            await getTrips(d.id)
+            progress = i++ / devices.length * 100
+        }
+    })
 
 </script>
 
 <svelte:window on:afterprint={() => showExport=true} />
-{#if $loadingReport}
-    <div class="flex items-center justify-center h-full">
-        <Spinner></Spinner>
-    </div>
-{:else}
 {#if showExport }
+<Progressbar {progress} labelInside size="h-4" />
 <Toolbar class="w-full">
     {#snippet end()}
     <div class="flex items-center space-x-1">
@@ -74,42 +94,48 @@
 <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">
     {t('Rapport de voyage')}
 </Heading>
-    {#await data.trips}
-    {:then trips}
 
 <div bind:this={tbl}>
     <Table hoverable striped>
     <TableHead>
-        <TableHeadCell class="text-center text-2xs p-0">Véhicule</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Groupe</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Modèle</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Conducteur</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Date</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Commencer</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Fin</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Destin</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Durée</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Ralenti</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Arrêt</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Distance</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Vit. moyenne</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Vit. maximale</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Consom. (L)</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-0">Consom. (L/100)</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Véhicule</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Groupe</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Modèle</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Conducteur</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Date</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Commencer</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Fin</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Destin</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Durée</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Ralenti</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Arrêt</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Distance</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Vit. moyenne</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Vit. maximale</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Consom. (L)</TableHeadCell>
+        <TableHeadCell class="text-center text-2xs p-1">Consom. (L/100)</TableHeadCell>
     </TableHead>
     <TableBody>
-        {#each trips as trip}
+        {#each devices as device, i}
+            {#await getTrips(device.id, i)}
+                <TableBodyRow>
+                    <TableBodyCell colspan="16">
+                        Loading {device.name}...<br>
+                    </TableBodyCell>
+                </TableBodyRow>
+            {:then trips}
+            {#each trips as trip}
             <TableBodyRow>
-                <TableBodyCell class="text-2xs p-1">
-                    {data.devices.find(d => d.id === trip.deviceId)?.name}
+                <TableBodyCell class="text-2xs p-1 text-wrap">
+                    {devices.find(d => d.id === trip.deviceId)?.name}
                 </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {data.groups.find(d => d.id === data.devices.find(d => d.id === trip.deviceId)?.groupId)?.name}
+                <TableBodyCell class="text-2xs p-1 text-wrap">
+                    {groups.find(d => d.id === devices.find(d => d.id === trip.deviceId)?.groupId)?.name}
                 </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {data.devices.find(d => d.id === trip.deviceId)?.model}
+                <TableBodyCell class="text-2xs p-1 text-wrap">
+                    {devices.find(d => d.id === trip.deviceId)?.model}
                 </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
+                <TableBodyCell class="text-2xs p-1 text-wrap">
                     {getDriver(trip)?.name}
                 </TableBodyCell>
                 <TableBodyCell class="text-2xs p-1">
@@ -153,12 +179,12 @@
                     {Math.round(trip.spentFuel/trip.distance)}
                 </TableBodyCell>
             </TableBodyRow>
+            {/each}
+            {/await}
         {/each}
-
     </TableBody>
 </Table>
 </div>
-{/await}
 
 <style>
     @page {
@@ -169,4 +195,3 @@
         print-color-adjust: exact;
     }
 </style>
-{/if}
