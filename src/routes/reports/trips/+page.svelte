@@ -21,22 +21,23 @@
     let progress = $state(0)
 
     function getDriver(trip) {
-        const uniqueId = data.devices.find(d => d.id === trip.deviceId)?.attributes.driverUniqueId
+        const uniqueId = devices.find(d => d.id === trip.deviceId)?.attributes.driverUniqueId
         return drivers.find(d => d.uniqueId === uniqueId)
     }
 
+    const promises = {}
     const tripsByDevice = {}
     function getTrips(deviceId) {
-        if (!tripsByDevice[deviceId]) {
+        if (!promises[deviceId]) {
             const params = new URLSearchParams(window.location.search)
             const newParams = new URLSearchParams({
                 deviceId,
                 from: params.get('from'),
                 to: params.get('to')
             })
-            tripsByDevice[deviceId] = fetch('/api/reports/trips?' + newParams).then(r => r.json())
+            promises[deviceId] = fetch('/api/reports/trips?' + newParams).then(r => r.json()).then(r => tripsByDevice[deviceId] = r)
         }
-        return tripsByDevice[deviceId]
+        return promises[deviceId]
     }
 
     onMount(async () => {
@@ -116,17 +117,21 @@
         <TableHeadCell class="text-center text-2xs p-1">Consom. (L/100)</TableHeadCell>
     </TableHead>
     <TableBody>
-        {#each devices as device, i}
-            {#await getTrips(device.id, i)}
+        {#each devices as device}
+            {#await getTrips(device.id)}
                 <TableBodyRow>
                     <TableBodyCell colspan="16">
                         Loading {device.name}...<br>
                     </TableBodyCell>
                 </TableBodyRow>
-            {:then trips}
-            {#each trips as trip}
-                {#if progress >= 100}
-            <TableBodyRow>
+            {:then}
+            {/await}
+        {/each}
+        {#if progress >= 100}
+        {#each devices as device}
+            {#each tripsByDevice[device.id] as trip}
+
+                    <TableBodyRow>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
                     {devices.find(d => d.id === trip.deviceId)?.name}
                 </TableBodyCell>
@@ -180,10 +185,10 @@
                     {Math.round(trip.spentFuel/trip.distance)}
                 </TableBodyCell>
             </TableBodyRow>
-                    {/if}
+
             {/each}
-            {/await}
         {/each}
+        {/if}
     </TableBody>
 </Table>
 </div>
