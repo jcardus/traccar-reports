@@ -4,7 +4,7 @@
         Table,
         TableBody,
         TableBodyCell,
-        TableBodyRow,
+        TableBodyRow, Spinner,
         TableHead, Progressbar,
         TableHeadCell, Toolbar
     } from "flowbite-svelte";
@@ -19,6 +19,9 @@
     import {formatDuration, intervalToDuration} from "date-fns";
     import {onMount} from "svelte";
     let progress = $state(0)
+    let deviceCount = 20
+    let _devices = $state(devices.slice(0, deviceCount))
+    let labelOutside = $state('')
 
     const promises = {}
     const tripsByDevice = {}
@@ -37,17 +40,24 @@
 
     onMount(async () => {
         let i = 1
+        devices.forEach(d => getTrips(d.id))
         for (const d of devices) {
             await getTrips(d.id)
-            progress = i++ / devices.length * 100
+            progress = Math.round(i++ / devices.length * 100)
+            labelOutside = d.name
         }
+        tbl && tbl.addEventListener("scroll", () => {
+            if (tbl.scrollTop + tbl.clientHeight >= tbl.scrollHeight && deviceCount < devices.length) {
+                deviceCount += 10
+                _devices = devices.slice(0, deviceCount)
+            }
+        })
     })
 
 </script>
 
 <svelte:window on:afterprint={() => showExport=true} />
-{#if showExport }
-<Progressbar {progress} labelInside size="h-4" />
+{#if showExport && progress >= 100}
 <Toolbar class="w-full">
     {#snippet end()}
     <div class="flex items-center space-x-1">
@@ -86,12 +96,18 @@
     {/snippet}
 </Toolbar>
 {/if}
-
+{#if progress < 100}
+    <Progressbar {progress} labelInside size="h-4" {labelOutside} />
+    <div class="flex items-center justify-center h-full">
+        <Spinner></Spinner>
+    </div>
+{:else}
 <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">
     {t('Rapport de voyage')}
 </Heading>
 
-<div bind:this={tbl}>
+<div bind:this={tbl} class="overflow-auto max-h-[80vh]">
+
     <Table hoverable striped>
     <TableHead>
         <TableHeadCell class="text-center text-2xs p-1">Véhicule</TableHeadCell>
@@ -112,18 +128,7 @@
         <TableHeadCell class="text-center text-2xs p-1">Consom. (L/100)</TableHeadCell>
     </TableHead>
     <TableBody>
-        {#each devices as device}
-            {#await getTrips(device.id)}
-                <TableBodyRow>
-                    <TableBodyCell colspan="16">
-                        Loading {device.name}...<br>
-                    </TableBodyCell>
-                </TableBodyRow>
-            {:then}
-            {/await}
-        {/each}
-        {#if progress >= 100}
-        {#each devices as device}
+        {#each _devices as device}
             {#each tripsByDevice[device.id] as trip}
                 <TableBodyRow>
                 <TableBodyCell class="text-2xs p-1 text-wrap">
@@ -179,13 +184,12 @@
                     {Math.round(trip.spentFuel/trip.distance)}
                 </TableBodyCell>
             </TableBodyRow>
-
             {/each}
         {/each}
-        {/if}
     </TableBody>
-</Table>
+    </Table>
 </div>
+{/if}
 
 <style>
     @page {
