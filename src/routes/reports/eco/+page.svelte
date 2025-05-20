@@ -131,7 +131,7 @@
                                     <b>{t('harshCornering')}:</b> {events.filter(e => e.attributes.alarm === 'hardCornering').length}<br>
                                     <b>{t('harshAccelerations')}:</b> {events.filter(e => e.attributes.alarm === 'hardAcceleration').length}<br>
                                     <b>{t('fuelUsed')}:</b> {trip.spentFuel.toFixed(1)}l<br>
-                                    <b>{t('consumption')}: {Math.min((trip.spentFuel/(trip.distance/1000)).toFixed(1), 50)} l/km</b><br>
+                                    <b>{t('consumption')}: {(trip.distance/1000/trip.spentFuel).toFixed(1)} km/l</b><br>
                                     <Rating id="example-1b" icon={wrapper({ fillColor: "#008800", strokeColor: "#008800" })} total={5} size={35} rating={5 - events.length/2}>
                                         {#snippet text()}
                                             <p class="p-2 text-xl"> {(5 - events.length/2).toFixed(1)}</p>
