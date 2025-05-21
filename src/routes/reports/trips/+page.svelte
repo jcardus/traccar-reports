@@ -43,12 +43,10 @@
     let handleScroll;
     onMount(async () => {
         let i = 1
-        devices.forEach(d => getTrips(d.id))
-        for (const d of devices) {
-            await getTrips(d.id)
+        await Promise.all(devices.map(d => getTrips(d.id).then(() => {
             progress = Math.round(i++ / devices.length * 100)
             labelOutside = d.name
-        }
+        })))
         handleScroll = () => {
             if (tbl.scrollTop + tbl.clientHeight >= tbl.scrollHeight && deviceCount < devices.length) {
                 deviceCount += 10
