@@ -35,18 +35,18 @@
     }
     async function getEventsAndPositions(trip) {
         const result = {}
-        let response = await fetch('/api/positions?' + new URLSearchParams({
+        let response = await fetch('/api/reports/route?' + new URLSearchParams({
             deviceId: trip.deviceId,
-            from: trip.startTime,
-            to: trip.endTime
+            from: new Date(trip.startTime).toISOString(),
+            to: new Date(trip.endTime).toISOString()
         }))
         if (response.ok) {
             result.positions = await response.json()
         }
         response = await fetch('/api/reports/events?' + new URLSearchParams({
             deviceId: trip.deviceId,
-            from: trip.startTime,
-            to: trip.endTime
+            from: new Date(trip.startTime).toISOString(),
+            to: new Date(trip.endTime).toISOString()
         }))
         if (response.ok) {
             result.events = (await response.json()).filter(e => ![
