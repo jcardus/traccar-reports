@@ -36,7 +36,8 @@
                 from: params.get('from'),
                 to: params.get('to')
             })
-            promises[deviceId] = fetch('/api/reports/trips?' + newParams).then(r => r.json()).then(r => tripsByDevice[deviceId] = r)
+            promises[deviceId] = fetch('/api/reports/trips?' + newParams,
+                {headers: {accept: 'application/json'}}).then(r => r.json()).then(r => tripsByDevice[deviceId] = r)
         }
         return promises[deviceId]
     }
@@ -126,8 +127,7 @@
     {t('Rapport de voyage')}
 </Heading>
 
-<div bind:this={tbl} class="overflow-auto max-h-[80vh]">
-
+<div bind:this={tbl} class="{showExport && 'overflow-auto max-h-[80vh]'}">
     <Table hoverable striped>
     <TableHead>
         {#each columns as column }
