@@ -8,15 +8,17 @@
         TableHead, Progressbar,
         TableHeadCell, Toolbar
     } from "flowbite-svelte";
-    import { t } from "$lib/i18n";
+    import { t, locale } from "$lib/i18n";
     import {ExpandOutline, FileChartBarSolid, FilePdfSolid, MinimizeOutline} from "flowbite-svelte-icons";
-    import { utils, writeFileXLSX } from 'xlsx';
+    import XlsxWorker from '$lib/workers/trips/worker.js?worker';
+    import {columns, getColumnValue} from '$lib/workers/trips/model';
+
     const { data } = $props();
     const {devices, drivers, groups} = data
     let showExport = $state(true)
     let tbl
     let maximized = $state(false)
-    import {formatDuration, intervalToDuration} from "date-fns";
+
     import {onMount} from "svelte";
     let progress = $state(0)
     let deviceCount = 20
@@ -38,7 +40,7 @@
         }
         return promises[deviceId]
     }
-
+    let handleScroll;
     onMount(async () => {
         let i = 1
         devices.forEach(d => getTrips(d.id))
@@ -47,12 +49,14 @@
             progress = Math.round(i++ / devices.length * 100)
             labelOutside = d.name
         }
-        tbl && tbl.addEventListener("scroll", () => {
+        handleScroll = () => {
             if (tbl.scrollTop + tbl.clientHeight >= tbl.scrollHeight && deviceCount < devices.length) {
                 deviceCount += 10
                 _devices = devices.slice(0, deviceCount)
             }
-        })
+        }
+        tbl?.addEventListener("scroll", handleScroll);
+        return () => tbl?.removeEventListener("scroll", handleScroll);
     })
 
 </script>
@@ -88,17 +92,21 @@
         </Button>
         <Button size="sm" color="alternative" class="gap-2 px-3" onclick={() => {
             generatingXls = true
-            setTimeout(() => {
-                const before = _devices
-                _devices = devices
-                requestAnimationFrame(() => {
-                    const elt = tbl.getElementsByTagName("TABLE")[0];
-                    const wb = utils.table_to_book(elt);
-                    writeFileXLSX(wb, "trips.xlsx");
-                    _devices = before
-                    generatingXls = false
-                })
-            }, 10)
+            const worker = new XlsxWorker();
+            worker.postMessage({locale, devices, tripsByDevice, drivers, groups});
+            worker.onmessage = e => {
+                const blob = new Blob([e.data.buffer], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "trips.xlsx";
+                a.click();
+                URL.revokeObjectURL(url);
+                generatingXls = false;
+                worker.terminate();
+            }
         }}>
             {#if generatingXls}
                 <Spinner class="me-3" size="4" color="white"/>
@@ -122,82 +130,22 @@
 
 <div bind:this={tbl} class="overflow-auto max-h-[80vh]">
 
-    <Table hoverable striped class="{generatingXls && 'hidden'}">
+    <Table hoverable striped>
     <TableHead>
-        <TableHeadCell class="text-center text-2xs p-1">Véhicule</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Groupe</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Modèle</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Conducteur</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Date</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Commencer</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Fin</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Destin</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Durée</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Ralenti</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Arrêt</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Distance</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Vit. moyenne</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Vit. maximale</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Consom. (L)</TableHeadCell>
-        <TableHeadCell class="text-center text-2xs p-1">Consom. (L/100)</TableHeadCell>
+        {#each columns as column }
+            <TableHeadCell class="text-center text-2xs p-1">{column}</TableHeadCell>
+        {/each}
     </TableHead>
     <TableBody>
         {#each _devices as device}
             {#each tripsByDevice[device.id] as trip}
                 <TableBodyRow>
-                <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {device.name}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {groups.find(g => g.id === device.groupId)?.name}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {device.model}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {drivers.find(d => d.uniqueId === device.attributes.driverUniqueId)?.name}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {new Date(trip.startTime).toLocaleDateString()}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {new Date(trip.startTime).toLocaleTimeString()}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {new Date(trip.endTime).toLocaleTimeString()}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {trip.endAddress}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1 text-wrap">
-                    {formatDuration(intervalToDuration({
-                        start: new Date(trip.startTime),
-                        end: new Date(trip.endTime)
-                    }))
-                    }
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    0
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    0
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {Math.round(trip.distance/1000)}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {Math.round(trip.averageSpeed*1.852)}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {Math.round(trip.maxSpeed*1.852)}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {trip.spentFuel}
-                </TableBodyCell>
-                <TableBodyCell class="text-2xs p-1">
-                    {Math.round(trip.spentFuel/trip.distance)}
-                </TableBodyCell>
-            </TableBodyRow>
+                {#each columns as _, i}
+                    <TableBodyCell class="text-2xs p-1 text-wrap">
+                        {getColumnValue(locale, groups, drivers, devices, device, trip, i)}
+                    </TableBodyCell>
+                {/each}
+                </TableBodyRow>
             {/each}
         {/each}
     </TableBody>
