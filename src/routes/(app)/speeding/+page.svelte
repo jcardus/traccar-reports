@@ -4,4 +4,4 @@
     let {devices} = data
 </script>
 
-<Report {devices}></Report>
+<Report {devices} report="speeding"></Report>
