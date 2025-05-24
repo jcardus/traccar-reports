@@ -21,7 +21,11 @@
             <MultiSelect
                 disabled={selectAll}
                 placeholder="{t('Select devices')}..."
-                items={devices.sort((a, b) => a.name.localeCompare(b.name)).map(d => ({value: d.id, name: d.name}))}
+                items={
+                    devices.sort((a, b) => a.name.localeCompare(b.name)).map(d => ({
+                        value: d.id,
+                        name: d.name + ` (${d.id})`}))
+                    }
                 bind:value={selected}
                 size="xs"
                 class="p-2"

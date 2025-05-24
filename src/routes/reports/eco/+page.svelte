@@ -104,11 +104,11 @@
                             {:then {positions, events}}
                                 <TableBodyCell class="text-center">
                                     <b>{new Date(trip.startTime).toLocaleString()}</b><br>
-                                    <span class="text-wrap text-xs" title="{positions[0]?.address}">{positions[0]?.address}</span>
+                                    <span class="text-wrap text-xs" title="{trip.startAddress}">{trip.startAddress}</span>
                                 </TableBodyCell>
                                 <TableBodyCell class="text-center">
                                     <b>{new Date(trip.endTime).toLocaleString()}</b><br>
-                                    <span class="text-wrap text-xs" title="{positions[positions.length-1]?.address}">{positions[positions.length-1]?.address}</span>
+                                    <span class="text-wrap text-xs" title="{trip.endAddress}">{trip.endAddress}</span>
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <a target="_blank"
