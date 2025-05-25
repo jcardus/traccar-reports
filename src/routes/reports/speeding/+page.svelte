@@ -52,7 +52,7 @@
         {#if !events.length}
             <div class="text-xl text-gray-900 dark:text-white">{t('no data')}</div>
         {:else}
-            <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl pb-4">
+            <Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">
                 {t('Speeding')}
             </Heading>
 <div bind:this={tbl}>
