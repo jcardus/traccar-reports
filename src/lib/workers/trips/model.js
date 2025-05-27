@@ -1,6 +1,4 @@
-import {formatDuration, intervalToDuration} from "date-fns";
-import { es, pt, fr } from 'date-fns/locale';
-const locales = { es, pt, fr };
+import {formatDuration} from "$lib/utils.js";
 
 export const columns = [
     'Véhicule',
@@ -39,9 +37,7 @@ export function getColumnValue(locale, groups, drivers, devices, device, trip, i
         case 7:
             return trip.endAddress
         case 8:
-            return formatDuration(
-                intervalToDuration({start: new Date(trip.startTime), end: new Date(trip.endTime)}),
-                {locale: locales[locale]})
+            return formatDuration(new Date(trip.endTime) - new Date(trip.startTime))
         case 9:
             return 0
         case 10:
