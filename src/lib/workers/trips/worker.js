@@ -7,10 +7,10 @@ self.onmessage = function (e) {
     rows.push(columns)
     devices.forEach(device => {
         const trips = tripsByDevice[device.id]
-        trips.forEach(trip => {
+        trips.forEach((trip, tripIndex) => {
             const row = []
             columns.forEach((c, i) => row.push(
-                getColumnValue(locale, groups, drivers, devices, device, trip, i)))
+                getColumnValue(locale, groups, drivers, devices, device, trip, i, tripsByDevice[device.id][tripIndex + 1])))
             rows.push(row)
         })
     })

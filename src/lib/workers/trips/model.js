@@ -18,7 +18,7 @@ export const columns = [
     'Consom. (L)',
     'Consom. (L/100)'
 ]
-export function getColumnValue(locale, groups, drivers, devices, device, trip, i) {
+export function getColumnValue(locale, groups, drivers, devices, device, trip, i, nextTrip) {
     switch (i) {
         case 0:
             return device.name
@@ -39,9 +39,9 @@ export function getColumnValue(locale, groups, drivers, devices, device, trip, i
         case 8:
             return formatDuration(new Date(trip.endTime) - new Date(trip.startTime))
         case 9:
-            return 0
+            return '-'
         case 10:
-            return 0
+            return nextTrip && formatDuration(new Date(nextTrip.startTime) -new Date(trip.endTime))
         case 11:
             return Math.round(trip.distance/1000)
         case 12:

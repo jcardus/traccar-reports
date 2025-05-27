@@ -138,11 +138,11 @@
     </TableHead>
     <TableBody>
         {#each _devices as device}
-            {#each tripsByDevice[device.id] as trip}
+            {#each tripsByDevice[device.id] as trip, tripIndex}
                 <TableBodyRow>
                 {#each columns as _, i}
                     <TableBodyCell class="text-2xs p-1 text-wrap">
-                        {getColumnValue(locale, groups, drivers, devices, device, trip, i)}
+                        {getColumnValue(locale, groups, drivers, devices, device, trip, i, tripsByDevice[device.id][tripIndex + 1])}
                     </TableBodyCell>
                 {/each}
                 </TableBodyRow>
