@@ -14,7 +14,7 @@
     import {columns, getColumnValue} from '$lib/workers/trips/model';
 
     const { data } = $props();
-    const {devices, drivers, groups} = data
+    const {drivers, groups} = data
     let showExport = $state(true)
     let tbl
     let maximized = $state(false)
@@ -22,6 +22,8 @@
     import {onMount} from "svelte";
     let progress = $state(0)
     let deviceCount = 20
+    const selected = new URLSearchParams(window.location.search).getAll('deviceId')
+    const devices = data.devices.filter(d => selected.includes(d.id.toString()))
     let _devices = $state(devices.slice(0, deviceCount))
     let labelOutside = $state('')
     let generatingXls = $state(false)
