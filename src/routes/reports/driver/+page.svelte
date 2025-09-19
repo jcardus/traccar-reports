@@ -136,7 +136,7 @@
     <Table hoverable striped>
     <TableHead>
         {#each columns as column }
-            <TableHeadCell class="text-center text-2xs p-1">{column}</TableHeadCell>
+            <TableHeadCell class="text-wrap text-xs p-1">{column}</TableHeadCell>
         {/each}
     </TableHead>
     <TableBody>
@@ -144,7 +144,7 @@
             {#each tripsByDevice[device.id] as trip, tripIndex}
                 <TableBodyRow>
                 {#each columns as _, i}
-                    <TableBodyCell class="text-2xs p-1 text-wrap">
+                    <TableBodyCell class="text-xs p-1 text-wrap">
                         {getColumnValue(locale, groups, drivers, devices, device, trip, i, tripsByDevice[device.id][tripIndex + 1])}
                     </TableBodyCell>
                 {/each}
