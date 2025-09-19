@@ -1,56 +1,38 @@
 import {formatDuration} from "$lib/utils.js";
 
 export const columns = [
-    'Véhicule',
-    'Groupe',
-    'Modèle',
-    'Conducteur',
-    'Date',
-    'Commencer',
-    'Fin',
-    'Destin',
-    'Durée',
-    'Ralenti',
-    'Arrêt',
-    'Distance',
-    'Vit. moyenne',
-    'Vit. maximale',
-    'Consom. (L)',
-    'Consom. (L/100)'
+    'Veículo',
+    'Grupo',
+    'Data',
+    'Início',
+    'Fim',
+    'Destino',
+    'Duração',
+    'Distância',
+    'Vel. Média',
+    'Vel. Máxima',
 ]
-export function getColumnValue(locale, groups, drivers, devices, device, trip, i, nextTrip) {
+export function getColumnValue(locale, groups, drivers, devices, device, trip, i) {
     switch (i) {
         case 0:
             return device.name
         case 1:
             return groups.find(g => g.id === device.groupId)?.name
         case 2:
-            return device.model
-        case 3:
-            return drivers.find(d => d.uniqueId === device.attributes.driverUniqueId)?.name
-        case 4:
             return new Date(trip.startTime).toLocaleDateString(locale)
-        case 5:
+        case 3:
             return new Date(trip.startTime).toLocaleTimeString(locale)
-        case 6:
+        case 4:
             return new Date(trip.endTime).toLocaleTimeString(locale)
-        case 7:
+        case 5:
             return trip.endAddress
-        case 8:
+        case 6:
             return formatDuration(new Date(trip.endTime) - new Date(trip.startTime))
-        case 9:
-            return '-'
-        case 10:
-            return nextTrip && formatDuration(new Date(nextTrip.startTime) -new Date(trip.endTime))
-        case 11:
+        case 7:
             return Math.round(trip.distance/1000)
-        case 12:
+        case 8:
             return Math.round(trip.averageSpeed*1.852)
-        case 13:
+        case 9:
             return Math.round(trip.maxSpeed*1.852)
-        case 14:
-            return trip.spentFuel
-        case 15:
-            return Math.round((trip.spentFuel / (trip.distance / 1000)) * 100)
     }
 }
