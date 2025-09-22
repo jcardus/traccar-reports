@@ -186,7 +186,7 @@
 
 <style>
     @page {
-        size: A4 landscape;
+        size: A4;
         margin: 5mm;
     }
     div {
