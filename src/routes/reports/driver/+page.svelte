@@ -62,6 +62,10 @@
 
 </script>
 
+<svelte:head>
+    <title>{t('Driver report').replace(/\s+/g, '-')}</title>that
+</svelte:head>
+
 <svelte:window on:afterprint={() => showExport=true} />
 {#if showExport && progress >= 100}
 <Toolbar class="w-full">
