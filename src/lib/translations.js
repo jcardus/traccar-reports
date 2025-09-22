@@ -5,6 +5,8 @@ export default {
         'Gerar': "Générer"
     },
     pt: {
+        'Generation date': 'Gerado em',
+        Period: 'Período',
         'eco driving': '',
         'no data': 'Não há dados para o relatório',
         'time': "Hora",
@@ -32,6 +34,10 @@ export default {
         harshCornering: 'Curvas bruscas'
     },
     es: {
+        'Generation date': 'Fecha de generación',
+        'Driver report': 'Reporte de conductor',
+        Driver: 'Conductor',
+        Period: 'Periodo',
         'Select all': 'Seleccionar todos',
         consumption: 'Consumo',
         fuelUsed: 'Combustible',

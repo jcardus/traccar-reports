@@ -1,6 +1,6 @@
 <script>
     import {
-        Button, Heading,
+        Button,
         Table,
         TableBody,
         TableBodyCell,
@@ -125,12 +125,36 @@
         <Spinner></Spinner>
     </div>
 {:else}
-<Heading tag="h1" class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">
-    {t('Driver report')}
-</Heading>
-<Heading tag="h2" class="text-sm font-semibold text-gray-900 dark:text-white p-4">
-    {drivers.find(d => d.uniqueId === selected)?.name}
-</Heading>
+<!-- Professional Report Header -->
+<div class="report-header bg-white dark:bg-gray-800 border-b-2 border-blue-600 p-6 mb-6 print:border-black">
+    <div class="flex justify-between items-start mb-4">
+        <div class="flex-1">
+
+            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border-l-4 border-blue-600">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                    <div>
+                        <span class="font-medium">{t('Driver')}</span><br>
+                        {drivers.find(d => d.uniqueId === selected)?.name}
+                    </div>
+                    <div>
+                        <span class="font-medium">{t('Period')}</span><br>
+                        {new Date(new URLSearchParams(window.location.search).get('from')).toLocaleDateString(locale)} -
+                        {new Date(new URLSearchParams(window.location.search).get('to')).toLocaleDateString(locale)}
+                    </div>
+                    <div>
+                        <span class="font-medium">{t('Generation date')}</span><br>
+                        {new Date().toLocaleString(locale)}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-right ml-6">
+            <img src="https://raw.githubusercontent.com/rastreosat/rastreosat.github.io/refs/heads/main/{window.location.hostname}/logo_large.svg" alt="Company Logo" class="h-8 w-auto mb-2" />
+            <div class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-1">{t('Driver report')}</div>
+            <div class="text-xs text-gray-400 dark:text-gray-500"></div>
+        </div>
+    </div>
+</div>
 
     <div bind:this={tbl} class="{showExport && 'overflow-auto max-h-[80vh]'}">
     <Table hoverable striped>
@@ -159,7 +183,7 @@
 <style>
     @page {
         size: A4 landscape;
-        margin: 2mm;
+        margin: 5mm;
     }
     div {
         print-color-adjust: exact;
