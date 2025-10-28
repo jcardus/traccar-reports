@@ -18,6 +18,8 @@
     onMount(() => {
         grid = createGrid(gridDiv, {
             pagination: true,
+            paginationPageSize: 500,
+            paginationPageSizeSelector: [500, 1000, 10000],
             columnDefs: [
                 {field: 'fixTime', valueFormatter: params => new Date(params.value).toLocaleString()},
                 {field: 'serverTime', valueFormatter: params => new Date(params.value).toLocaleString()},
