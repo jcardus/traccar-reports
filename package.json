@@ -20,12 +20,13 @@
 		"@turf/distance": "^7.1.0",
 		"@turf/helpers": "^7.1.0",
 		"@unovis/svelte": "1.5.0",
-        "ag-grid-community": "^34.3.0",
+		"ag-grid-community": "^34.3.0",
 		"autoprefixer": "^10.4.20",
 		"date-fns": "^3.6.0",
 		"flowbite": "^3.1.2",
 		"flowbite-svelte": "^1.2.3",
 		"flowbite-svelte-icons": "^2.1.1",
+		"sass-embedded": "^1.93.2",
 		"svelte": "^5.19.6",
 		"svelte-check": "^4.1.4",
 		"tailwindcss": "^3.4.9",
@@ -33,5 +34,8 @@
 		"vite": "^5.4.19",
 		"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"choices.js": "^11.1.0"
+	}
 }

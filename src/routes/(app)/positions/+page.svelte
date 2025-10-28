@@ -39,7 +39,7 @@
 
 <div class="flex flex-col h-full">
     <Toolbar >
-        <div class="flex gap-4">
+        <div class="w-80">
             <SelectDevice devices={devices} bind:selected="{selected}"/>
         </div>
         <div class="p-4 w-96">

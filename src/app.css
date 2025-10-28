@@ -1,6 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import "choices.js/src/styles/base";
 body {
     height: 100vh;
 }
