@@ -14,14 +14,15 @@
     let devices = $derived(data.devices)
     let gridDiv
     let grid
+    import {TabulatorFull as Tabulator} from 'tabulator-tables';
+
 
     onMount(() => {
-        grid = createGrid(gridDiv, {
-            pagination: true,
-            paginationPageSize: 500,
-            paginationPageSizeSelector: [500, 1000, 10000],
-            columnDefs: [
-                {field: 'fixTime', valueFormatter: params => new Date(params.value).toLocaleString()},
+        grid = new Tabulator("#grid", {
+            layout:"fitColumns", //fit columns to width of table (optional)
+            // autoColumns:true,
+            columns: [
+                {field: 'fixTime', valueFormatter: params => new Date(params.value).toLocaleString(), title: 'Fix Time', formatter: 'datetime'},
                 {field: 'serverTime', valueFormatter: params => new Date(params.value).toLocaleString()},
                 {field: 'protocol'},
                 {field: 'valid'},
@@ -31,14 +32,42 @@
                 {field: 'speed'},
                 {field: 'course'},
                 {field: 'attributes', valueFormatter: params => JSON.stringify(params.value)},
-            ]
+            ],
+            pagination:"local",
+            paginationSize:500,
+            paginationSizeSelector:[500, 1000, 1000],
+            paginationCounter:"rows",
+            locale: true,
+            langs: {
+                pt: {
+                    pagination: {
+                        all: "All",
+                        counter: {
+                            of: "de",
+                            pages: "pages",
+                            rows: "registos",
+                            showing: "Mostrando",
+                        },
+                        first: "First", //text for the first page button
+                        first_title: "First Page", //tooltip text for the first page button
+                        last: "Last",
+                        last_title: "Last Page",
+                        next: "Next",
+                        next_title: "Next Page",
+                        page_size: "Page Size",
+                        page_title: "Show Page",
+                        prev: "Prev",
+                        prev_title: "Prev Page"
+                    },
+                },
+            },
         });
     })
 
 </script>
 
 <div class="flex flex-col h-full">
-    <Toolbar >
+    <div class="flex gap-4 items-center">
         <div class="flex gap-4">
             <SelectDevice devices={devices} bind:selected="{selected}"/>
         </div>
@@ -50,13 +79,13 @@
                 loadingReport = false
                 if (selected && start && end) {
                     loadingReport = true
-                    grid.setGridOption('rowData', null)
+                    // grid.setGridOption('rowData', null)
                     const url = `/api/positions?deviceId=${selected}&from=${new Date(start).toISOString()}&to=${new Date(end).toISOString()}`;
                     const response = await fetch(url)
                     if (response.ok) {
                         loadingReport = false
                         reportLoaded = true
-                        grid.setGridOption('rowData', await response.json())
+                        grid.setData(await response.json())
                     }
                 } else {
                     setAlert('Please select devices and dates')
@@ -68,6 +97,7 @@
                 {loadingReport?t('Carregando...'):t('Gerar')}
             </Button>
         </div>
-    </Toolbar>
-    <div bind:this={gridDiv} class="ag-theme-alpine-dark flex-1" style="visibility:{reportLoaded?'block':'hidden'}; width: 100%;"></div>
+    </div>
+
+    <div bind:this={gridDiv} id="grid" class="flex-1" style="visibility:{reportLoaded?'block':'hidden'}; width: 100%;"></div>
 </div>
