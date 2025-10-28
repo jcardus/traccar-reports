@@ -2,7 +2,13 @@
     import "../../app.css";
 import {Alert} from "flowbite-svelte";
 import {alert, error, clearAlert, clearError} from '$lib/store'
-import {ExclamationCircleOutline, InfoCircleSolid, TruckOutline, UserOutline} from "flowbite-svelte-icons";
+    import {
+        ExclamationCircleOutline,
+        InfoCircleSolid,
+        MapPinAltOutline,
+        TruckOutline,
+        UserOutline
+    } from "flowbite-svelte-icons";
 import { Sidebar, SidebarGroup, SidebarItem, SidebarButton, uiHelpers } from "flowbite-svelte";
 import { page } from "$app/state";
 import {t} from "$lib/i18n.js";
@@ -43,7 +49,8 @@ const unsubscribeAlert = alert.subscribe(value => {
 let items = [
     { name: t('Driver'), Icon: UserOutline, href: '/treports/driver' },
     { name: t('Speeding'), Icon: ExclamationCircleOutline, href: '/treports/speeding' },
-    { name: t('ECO driving'), Icon: TruckOutline, href: '/treports/eco' }
+    { name: t('ECO driving'), Icon: TruckOutline, href: '/treports/eco' },
+    { name: t('Positions'), Icon: MapPinAltOutline, href: '/treports/positions' }
 ];
 let lg,sm;
 const checkWidth = () => {
