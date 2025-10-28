@@ -19,7 +19,17 @@
         grid = createGrid(gridDiv, {
             pagination: true,
             columnDefs: [
-                {field: 'latitude'}, {field: 'longitude'}, {field: 'speed'}, {field: 'fixTime'}]
+                {field: 'fixTime', valueFormatter: params => new Date(params.value).toLocaleString()},
+                {field: 'serverTime', valueFormatter: params => new Date(params.value).toLocaleString()},
+                {field: 'protocol'},
+                {field: 'valid'},
+                {field: 'latitude'},
+                {field: 'longitude'},
+                {field: 'address'},
+                {field: 'speed'},
+                {field: 'course'},
+                {field: 'attributes', valueFormatter: params => JSON.stringify(params.value)},
+            ]
         });
     })
 
