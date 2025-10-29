@@ -64,14 +64,18 @@ function toggleMinify() {
 <!-- End Navigation Toggle -->
 
 <!-- Sidebar -->
-<div id="hs-sidebar-content-push-to-mini-sidebar" class="hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 {isMinified ? 'w-16' : 'w-64'}
-hs-overlay-open:translate-x-0
--translate-x-full transition-all duration-300 transform
-h-full
-hidden
-overflow-x-hidden
-fixed top-0 start-0 bottom-0 z-60
-bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" role="dialog" tabindex="-1" aria-label="Sidebar" >
+<div id="hs-sidebar-content-push-to-mini-sidebar"
+     class="
+        hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 {isMinified ? 'w-16' : 'w-64'}
+        hs-overlay-open:translate-x-0
+        -translate-x-full transition-all duration-300 transform
+        h-full
+        hidden
+        overflow-x-hidden
+        fixed top-0 start-0 bottom-0 z-60
+        bg-gray-100 dark:bg-gray-800
+        "
+     role="dialog" tabindex="-1" aria-label="Sidebar" >
 
     <div class="relative flex flex-col h-full max-h-full ">
         <!-- Header -->
@@ -107,7 +111,7 @@ bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" r
                     {#each items as { name, Icon, href } (name)}
                     <li>
                         <a class="nav-item min-h-[36px] flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg
-                            hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700
+                            hover:bg-gray-100  focus:bg-gray-100 dark:hover:bg-primary-100 dark:hover:text-primary-600  dark:focus:text-primary-600
                             dark:focus:bg-neutral-700
                             {activeUrl === href ?
                             'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-200' :
@@ -127,7 +131,7 @@ bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" r
     </div>
 
 </div>
-<div class="p-4 dark:border-gray-700 h-full transition-all duration-300 {isMinified ? 'lg:ml-16' : 'lg:ml-64'}">
+<div class="p-4 h-full transition-all duration-300 {isMinified ? 'lg:ml-16' : 'lg:ml-64'}">
     {@render children()}
 </div>
 
