@@ -29,7 +29,7 @@
             ],
             pagination:"local",
             paginationSize:500,
-            paginationSizeSelector:[500, 1000, 1000],
+            paginationSizeSelector:[500, 1000, 10000],
             paginationCounter:"rows",
             locale: true,
             langs: {
