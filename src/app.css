@@ -1,7 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import  "tabulator-tables/dist/css/tabulator.min.css";
+@import  "tabulator-tables/dist/css/tabulator_bulma.min.css";
 body {
     height: 100vh;
 }

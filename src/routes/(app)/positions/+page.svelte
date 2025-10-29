@@ -10,14 +10,14 @@
     import {onMount} from "svelte";
     let devices = $derived(data.devices)
     let grid
-    import {Tabulator, FormatModule, PageModule} from 'tabulator-tables';
-    Tabulator.registerModule([FormatModule, PageModule]);
+    import {Tabulator, FormatModule, PageModule, SortModule} from 'tabulator-tables';
+    Tabulator.registerModule([FormatModule, PageModule, SortModule]);
 
     onMount(() => {
         grid = new Tabulator("#grid", {
             columns: [
-                {field: 'fixTime', title: 'Fix Time', formatter: cell => new Date(cell.getValue()).toLocaleString()},
-                {field: 'serverTime', title: 'Server Time', formatter: cell => new Date(cell.getValue()).toLocaleString()},
+                {field: 'fixTime', title: 'Fix Time', formatter: cell => new Date(cell.getValue()).toLocaleString(), sorter: 'number'},
+                {field: 'serverTime', title: 'Server Time', formatter: cell => new Date(cell.getValue()).toLocaleString(), sorter: 'number'},
                 {field: 'protocol', title: 'Protocol'},
                 {field: 'valid', title: 'Valid'},
                 {field: 'latitude', title: 'Latitude'},
