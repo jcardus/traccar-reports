@@ -55,22 +55,12 @@ function toggleMinify() {
     isMinified = !isMinified;
 }
 </script>
-<!-- Navigation Toggle -->
-<div class="lg:hidden py-16 text-center">
-    <button type="button" class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-start bg-gray-800 border border-gray-800 text-white text-sm font-medium rounded-lg shadow-2xs align-middle hover:bg-gray-950 focus:outline-hidden focus:bg-gray-900 dark:bg-white dark:text-neutral-800 dark:hover:bg-neutral-200 dark:focus:bg-neutral-200" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-sidebar-content-push-to-mini-sidebar" aria-label="Toggle navigation" data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
-        Open
-    </button>
-</div>
-<!-- End Navigation Toggle -->
-
 <!-- Sidebar -->
-<div id="hs-sidebar-content-push-to-mini-sidebar"
-     class="
-        hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 {isMinified ? 'w-16' : 'w-64'}
+<div class="
+        hs-overlay lg:translate-x-0 lg:end-auto lg:bottom-0 {isMinified ? 'w-16' : 'w-56 '}
         hs-overlay-open:translate-x-0
         -translate-x-full transition-all duration-300 transform
         h-full
-        hidden
         overflow-x-hidden
         fixed top-0 start-0 bottom-0 z-60
         bg-gray-100 dark:bg-gray-800
@@ -79,15 +69,7 @@ function toggleMinify() {
 
     <div class="relative flex flex-col h-full max-h-full ">
         <!-- Header -->
-        <header class="py-4 px-2 flex items-center gap-x-2 {isMinified ? 'justify-center' : 'justify-end'}">
-            <div class="lg:hidden">
-                <!-- Close Button -->
-                <button type="button" class="flex justify-center items-center gap-x-3 size-6 bg-white border border-gray-200 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200" data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
-                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    <span class="sr-only">Close</span>
-                </button>
-                <!-- End Close Button -->
-            </div>
+        <header class="flex items-center gap-x-2 {isMinified ? 'justify-center' : 'justify-end'}">
             <div>
                 <!-- Toggle Button -->
                 <button type="button" onclick={toggleMinify} class="flex justify-center items-center flex-none gap-x-3 size-9 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200" aria-label="Minify navigation">
