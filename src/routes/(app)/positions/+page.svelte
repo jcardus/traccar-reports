@@ -94,13 +94,12 @@
                 loadingReport = false
                 if (selected && start && end) {
                     loadingReport = true
-                    // grid.setGridOption('rowData', null)
                     const url = `/api/positions?deviceId=${selected}&from=${new Date(start).toISOString()}&to=${new Date(end).toISOString()}`;
                     const response = await fetch(url)
                     if (response.ok) {
+                        grid.setData(await response.json())
                         loadingReport = false
                         reportLoaded = true
-                        grid.setData(await response.json())
                     }
                 } else {
                     setAlert('Please select devices and dates')
