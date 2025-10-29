@@ -57,10 +57,11 @@ function toggleMinify() {
 </script>
 <!-- Sidebar -->
 <div class="
-        hs-overlay lg:translate-x-0 lg:end-auto lg:bottom-0 {isMinified ? 'w-16' : 'w-56 '}
+        hs-overlay [--auto-close:lg] lg:block lg:translate-x-0 lg:end-auto lg:bottom-0 {isMinified ? 'w-16' : 'w-64'}
         hs-overlay-open:translate-x-0
         -translate-x-full transition-all duration-300 transform
         h-full
+        hidden
         overflow-x-hidden
         fixed top-0 start-0 bottom-0 z-60
         bg-gray-100 dark:bg-gray-800
