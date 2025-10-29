@@ -1,9 +1,6 @@
 <script>
-    import {Button, Toolbar, Spinner, Datepicker} from "flowbite-svelte";
-    import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+    import {Button, Spinner, Datepicker} from "flowbite-svelte";
     import {setAlert} from "$lib/store.js";
-    import { createGrid } from 'ag-grid-community';
-    ModuleRegistry.registerModules([AllCommunityModule]);
     let loadingReport = $state(false)
     let start = $state(undefined), end = $state(undefined), selected = $state(undefined), datePicker = $state(undefined)
     const {data} = $props()
@@ -12,33 +9,89 @@
     import SelectDevice from "$lib/components/SelectDevice.svelte";
     import {onMount} from "svelte";
     let devices = $derived(data.devices)
-    let gridDiv
     let grid
+    import {Tabulator, FormatModule, PageModule} from 'tabulator-tables';
+    Tabulator.registerModule([FormatModule, PageModule]);
 
     onMount(() => {
-        grid = createGrid(gridDiv, {
-            pagination: true,
-            paginationPageSize: 500,
-            paginationPageSizeSelector: [500, 1000, 10000],
-            columnDefs: [
-                {field: 'fixTime', valueFormatter: params => new Date(params.value).toLocaleString()},
-                {field: 'serverTime', valueFormatter: params => new Date(params.value).toLocaleString()},
-                {field: 'protocol'},
-                {field: 'valid'},
-                {field: 'latitude'},
-                {field: 'longitude'},
-                {field: 'address'},
-                {field: 'speed'},
-                {field: 'course'},
-                {field: 'attributes', valueFormatter: params => JSON.stringify(params.value)},
-            ]
+        grid = new Tabulator("#grid", {
+            columns: [
+                {field: 'fixTime', title: 'Fix Time', formatter: cell => new Date(cell.getValue()).toLocaleString()},
+                {field: 'serverTime', title: 'Server Time', formatter: cell => new Date(cell.getValue()).toLocaleString()},
+                {field: 'protocol', title: 'Protocol'},
+                {field: 'valid', title: 'Valid'},
+                {field: 'latitude', title: 'Latitude'},
+                {field: 'longitude', title: 'Longitude'},
+                {field: 'address', title: 'Address'},
+                {field: 'speed', title: 'Speed'},
+                {field: 'course', title: 'Course'},
+                {
+                    field: 'attributes',
+                    title: 'Attributes',
+                    variableHeight:true,
+                    formatter:"json",
+                    formatterParams: {
+                        multiline: false,
+                        indent: ' '
+                    }
+                }
+            ],
+            pagination:"local",
+            paginationSize:500,
+            paginationSizeSelector:[500, 1000, 1000],
+            paginationCounter:"rows",
+            locale: true,
+            langs: {
+                es: {
+                    pagination: {
+                        all: "All",
+                        counter: {
+                            of: "de",
+                            pages: "pages",
+                            rows: "registos",
+                            showing: "Mostrando",
+                        },
+                        first: "First", //text for the first page button
+                        first_title: "First Page", //tooltip text for the first page button
+                        last: "Last",
+                        last_title: "Last Page",
+                        next: "Next",
+                        next_title: "Next Page",
+                        page_size: "Page Size",
+                        page_title: "Show Page",
+                        prev: "Prev",
+                        prev_title: "Prev Page"
+                    },
+                },
+                pt: {
+                    pagination: {
+                        all: "All",
+                        counter: {
+                            of: "de",
+                            pages: "pages",
+                            rows: "registos",
+                            showing: "Mostrando",
+                        },
+                        first: "First", //text for the first page button
+                        first_title: "First Page", //tooltip text for the first page button
+                        last: "Last",
+                        last_title: "Last Page",
+                        next: "Next",
+                        next_title: "Next Page",
+                        page_size: "Page Size",
+                        page_title: "Show Page",
+                        prev: "Prev",
+                        prev_title: "Prev Page"
+                    },
+                },
+            },
         });
     })
 
 </script>
 
 <div class="flex flex-col h-full">
-    <Toolbar >
+    <div class="flex gap-4 items-center">
         <div class="flex gap-4">
             <SelectDevice devices={devices} bind:selected="{selected}"/>
         </div>
@@ -50,13 +103,13 @@
                 loadingReport = false
                 if (selected && start && end) {
                     loadingReport = true
-                    grid.setGridOption('rowData', null)
+                    // grid.setGridOption('rowData', null)
                     const url = `/api/positions?deviceId=${selected}&from=${new Date(start).toISOString()}&to=${new Date(end).toISOString()}`;
                     const response = await fetch(url)
                     if (response.ok) {
                         loadingReport = false
                         reportLoaded = true
-                        grid.setGridOption('rowData', await response.json())
+                        grid.setData(await response.json())
                     }
                 } else {
                     setAlert('Please select devices and dates')
@@ -68,6 +121,7 @@
                 {loadingReport?t('Carregando...'):t('Gerar')}
             </Button>
         </div>
-    </Toolbar>
-    <div bind:this={gridDiv} class="ag-theme-alpine-dark flex-1" style="visibility:{reportLoaded?'block':'hidden'}; width: 100%;"></div>
+    </div>
+
+    <div id="grid" class="flex-1" style="visibility:{reportLoaded?'block':'hidden'}; width: 100%;"></div>
 </div>
