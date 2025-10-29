@@ -9,7 +9,6 @@ import {
     TruckOutline,
     UserOutline
 } from "flowbite-svelte-icons";
-import { uiHelpers } from "flowbite-svelte";
 import { page } from "$app/state";
 import {t} from "$lib/i18n.js";
 // noinspection JSFileReferences
@@ -17,27 +16,13 @@ import config from 'tailwindcss/defaultTheme.js'
 import {onMount} from "svelte";
 let activeUrl = $state(page.url.pathname);
 
-const demoSidebarUi = uiHelpers();
-let isDemoOpen = $state(false);
 let isMinified = $state(false);
-const closeDemoSidebar = demoSidebarUi.close;
 $effect(() => {
-    isDemoOpen = demoSidebarUi.isOpen;
     activeUrl = page.url.pathname;
 });
 
 let {children} = $props()
-let errorMessage = $state('')
 let alertMessage = $state('')
-
-const unsubscribe = error.subscribe(value => {
-    errorMessage = value;
-    if (value) {
-        setTimeout(() => {
-            clearError();
-        }, 5000);
-    }
-});
 
 const unsubscribeAlert = alert.subscribe(value => {
     alertMessage = value;
@@ -65,7 +50,6 @@ onMount(() => {
         window.removeEventListener('resize', checkWidth);
     };
 })
-    const sidebar = page.url.searchParams.get('sidebar') !== '0'
 
 function toggleMinify() {
     isMinified = !isMinified;
@@ -100,7 +84,6 @@ bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" r
                 </button>
                 <!-- End Close Button -->
             </div>
-
             <div>
                 <!-- Toggle Button -->
                 <button type="button" onclick={toggleMinify} class="flex justify-center items-center flex-none gap-x-3 size-9 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200" aria-label="Minify navigation">
@@ -117,13 +100,19 @@ bg-white border-e border-gray-200 dark:bg-neutral-800 dark:border-neutral-700" r
         <!-- End Header -->
 
         <!-- Body -->
-        <nav class="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+        <nav class="h-full overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300
+        dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
             <div class=" pb-0 px-2  w-full flex flex-col flex-wrap" >
                 <ul class="space-y-1">
                     {#each items as { name, Icon, href } (name)}
                     <li>
-                        <a class="nav-item min-h-[36px] flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {activeUrl === href ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-white'}"
-                           {href} title={isMinified ? name : ''}>
+                        <a class="nav-item min-h-[36px] flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg
+                            hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700
+                            dark:focus:bg-neutral-700
+                            {activeUrl === href ?
+                            'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-200' :
+                            'bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-white'
+                            }" {href} title={isMinified ? name : ''}>
                             <Icon/>
                             {#if !isMinified}
                                 <span>{name}</span>
