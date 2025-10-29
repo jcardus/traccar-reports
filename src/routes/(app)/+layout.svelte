@@ -79,7 +79,7 @@ function toggleMinify() {
 
     <div class="relative flex flex-col h-full max-h-full ">
         <!-- Header -->
-        <header class="py-4 px-2 flex justify-end items-center gap-x-2">
+        <header class="py-4 px-2 flex items-center gap-x-2 {isMinified ? 'justify-center' : 'justify-end'}">
             <div class="lg:hidden">
                 <!-- Close Button -->
                 <button type="button" class="flex justify-center items-center gap-x-3 size-6 bg-white border border-gray-200 text-sm text-gray-600 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:hover:text-neutral-200 dark:focus:text-neutral-200" data-hs-overlay="#hs-sidebar-content-push-to-mini-sidebar">
