@@ -25,16 +25,7 @@
                 {field: 'address', title: 'Address'},
                 {field: 'speed', title: 'Speed'},
                 {field: 'course', title: 'Course'},
-                {
-                    field: 'attributes',
-                    title: 'Attributes',
-                    variableHeight:true,
-                    formatter:"json",
-                    formatterParams: {
-                        multiline: false,
-                        indent: ' '
-                    }
-                }
+                {field: 'attributes', title: 'Attributes', formatter: cell => JSON.stringify(cell.getValue())},
             ],
             pagination:"local",
             paginationSize:500,
