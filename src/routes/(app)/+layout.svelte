@@ -110,9 +110,10 @@ function toggleMinify() {
                 <ul class="space-y-1">
                     {#each items as { name, Icon, href } (name)}
                     <li>
-                        <a class="nav-item min-h-[36px] flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg
+                        <a class="nav-item min-h-[36px] flex items-center py-2 text-sm rounded-lg
                             hover:bg-gray-100  focus:bg-gray-100 dark:hover:bg-primary-100 dark:hover:text-primary-600  dark:focus:text-primary-600
                             dark:focus:bg-neutral-700
+                            {isMinified ? 'justify-center px-0' : 'gap-x-3.5 px-2.5'}
                             {activeUrl === href ?
                             'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-200' :
                             'bg-gray-100 text-gray-800 dark:bg-neutral-700 dark:text-white'
