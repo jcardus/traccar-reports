@@ -115,3 +115,14 @@
 
     <div id="grid" class="flex-1" style="visibility:{reportLoaded?'block':'hidden'}; width: 100%;"></div>
 </div>
+
+<!--suppress CssUnusedSymbol -->
+<style>
+    :global(.tabulator) {
+        background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1)) !important;
+        font-size: 14px !important;
+    }
+    :global(.tabulator .tabulator-row:hover) {
+        background-color:  #FFF5F2;
+    }
+</style>
