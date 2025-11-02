@@ -10,11 +10,34 @@
     import {onMount} from "svelte";
     let devices = $derived(data.devices)
     let grid
-    import {Tabulator, FormatModule, PageModule, SortModule} from 'tabulator-tables';
-    Tabulator.registerModule([FormatModule, PageModule, SortModule]);
+    import {Tabulator, FormatModule, PageModule, SortModule, DownloadModule, ExportModule} from 'tabulator-tables';
+    import * as XLSX from 'xlsx';
+    import {FileChartBarSolid} from "flowbite-svelte-icons";
+    Tabulator.registerModule([FormatModule, PageModule, SortModule, DownloadModule, ExportModule]);
+
+    function getAttributeColumns(data) {
+        // Collect all unique attribute keys from the data
+        const attributeKeys = new Set();
+        data.forEach(row => {
+            if (row.attributes && typeof row.attributes === 'object') {
+                Object.keys(row.attributes).forEach(key => attributeKeys.add(key));
+            }
+        });
+
+        // Create columns for each attribute
+        return Array.from(attributeKeys).sort().map(key => ({
+            field: 'attributes|'+key,
+            title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize first letter
+            formatter: cell => {
+                const value = cell.getData()?.attributes?.[key];
+                return value !== undefined && value !== null ? value : '';
+            }
+        }));
+    }
 
     onMount(() => {
         grid = new Tabulator("#grid", {
+            dependencies: {XLSX:XLSX},
             columns: [
                 {field: 'fixTime', title: 'Fix Time', formatter: cell => new Date(cell.getValue()).toLocaleString(), sorter: 'number'},
                 {field: 'serverTime', title: 'Server Time', formatter: cell => new Date(cell.getValue()).toLocaleString(), sorter: 'number'},
@@ -25,7 +48,6 @@
                 {field: 'address', title: 'Address'},
                 {field: 'speed', title: 'Speed'},
                 {field: 'course', title: 'Course'},
-                {field: 'attributes', title: 'Attributes', formatter: cell => JSON.stringify(cell.getValue())},
             ],
             pagination:"local",
             paginationSize:500,
@@ -89,7 +111,7 @@
         <div class="p-4 w-96">
             <Datepicker locale={navigator.language} range bind:rangeFrom={start} bind:rangeTo={end} bind:datePicker="{datePicker}"></Datepicker>
         </div>
-        <div class="p-4">
+        <div>
             <Button onclick={async () => {
                 loadingReport = false
                 if (selected && start && end) {
@@ -97,7 +119,26 @@
                     const url = `/api/positions?deviceId=${selected}&from=${new Date(start).toISOString()}&to=${new Date(end).toISOString()}`;
                     const response = await fetch(url)
                     if (response.ok) {
-                        grid.setData(await response.json())
+                        const data = await response.json()
+
+                        // Get base columns
+                        const baseColumns = [
+                            {field: 'fixTime', title: 'Fix Time', formatter: cell => new Date(cell.getValue()).toLocaleString(), sorter: 'number'},
+                            {field: 'serverTime', title: 'Server Time', formatter: cell => new Date(cell.getValue()).toLocaleString(), sorter: 'number'},
+                            {field: 'protocol', title: 'Protocol'},
+                            {field: 'valid', title: 'Valid'},
+                            {field: 'latitude', title: 'Latitude'},
+                            {field: 'longitude', title: 'Longitude'},
+                            {field: 'address', title: 'Address'},
+                            {field: 'speed', title: 'Speed'},
+                            {field: 'course', title: 'Course'},
+                        ];
+
+                        // Add attribute columns dynamically
+                        const attributeColumns = getAttributeColumns(data);
+                        grid.setColumns([...baseColumns, ...attributeColumns]);
+
+                        grid.setData(data)
                         loadingReport = false
                         reportLoaded = true
                     }
@@ -110,6 +151,13 @@
                 {/if}
                 {loadingReport?t('Carregando...'):t('Gerar')}
             </Button>
+        </div>
+        <div>
+            {#if reportLoaded}
+                <Button  color="alternative" onclick={() => grid.download("xlsx", "positions.xlsx")}>
+                    <FileChartBarSolid/>Xlsx
+                </Button>
+            {/if}
         </div>
     </div>
 
