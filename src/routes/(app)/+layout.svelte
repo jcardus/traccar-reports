@@ -3,6 +3,7 @@
 import {Alert} from "flowbite-svelte";
 import {alert, clearAlert} from '$lib/store'
 import {
+    CashOutline,
     ExclamationCircleOutline,
     InfoCircleSolid,
     MapPinAltOutline,
@@ -36,7 +37,8 @@ let items = [
     { name: t('Driver'), Icon: UserOutline, href: '/treports/driver' },
     { name: t('Speeding'), Icon: ExclamationCircleOutline, href: '/treports/speeding' },
     { name: t('ECO driving'), Icon: TruckOutline, href: '/treports/eco' },
-    { name: t('Positions'), Icon: MapPinAltOutline, href: '/treports/positions' }
+    { name: t('Positions'), Icon: MapPinAltOutline, href: '/treports/positions' },
+    { name: t('Tolls'), Icon: CashOutline, href: '/treports/tolls' }
 ];
 let lg,sm;
 const checkWidth = () => {

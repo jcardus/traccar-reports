@@ -6,7 +6,7 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api/socket': 'ws://gps.rastreosat.com.br',
-			'/api': 'http://gps.frotaweb.com',
+			'/api': 'http://localhost:8788',
 		}
 	}
 });
